@@ -1,6 +1,6 @@
 <?php
 
-namespace Isswp101\Persimmon\Support;
+namespace Isswp101\Persimmon\Traits;
 
 trait Arrayable
 {

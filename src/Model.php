@@ -2,15 +2,15 @@
 
 namespace Isswp101\Persimmon;
 
-use Isswp101\Persimmon\Support\Arrayable;
-use Isswp101\Persimmon\Support\Cacheable;
-use Isswp101\Persimmon\Support\Containerable;
-use Isswp101\Persimmon\Support\Fillable;
-use Isswp101\Persimmon\Support\Idable;
-use Isswp101\Persimmon\Support\Jsonable;
-use Isswp101\Persimmon\Support\Stringable;
-use Isswp101\Persimmon\Support\Timestampable;
-use Isswp101\Persimmon\Support\Userable;
+use Isswp101\Persimmon\Traits\Arrayable;
+use Isswp101\Persimmon\Traits\Cacheable;
+use Isswp101\Persimmon\Traits\Containerable;
+use Isswp101\Persimmon\Traits\Fillable;
+use Isswp101\Persimmon\Traits\Idable;
+use Isswp101\Persimmon\Traits\Jsonable;
+use Isswp101\Persimmon\Traits\Stringable;
+use Isswp101\Persimmon\Traits\Timestampable;
+use Isswp101\Persimmon\Traits\Userable;
 
 class Model
 {
