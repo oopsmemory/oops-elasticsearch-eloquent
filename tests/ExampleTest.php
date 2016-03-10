@@ -2,13 +2,13 @@
 
 namespace Isswp101\Persimmon\Test;
 
+use Isswp101\Persimmon\Model;
+
 class ExampleTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * Test that true does in fact equal true
-     */
-    public function testTrueIsTrue()
+    public function test1()
     {
-        $this->assertTrue(true);
+        $model = new Model();
+        $this->assertInstanceOf(Model::class, $model);
     }
 }
