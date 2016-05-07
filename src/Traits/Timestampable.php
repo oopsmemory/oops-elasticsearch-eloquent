@@ -19,6 +19,7 @@ trait Timestampable
      */
     public function getCreatedAt()
     {
+        // @TODO: return \Carbon instance
         return $this->created_at;
     }
 
@@ -35,6 +36,7 @@ trait Timestampable
      */
     public function getUpdatedAt()
     {
+        // @TODO: return \Cabron instance
         return $this->updated_at;
     }
 

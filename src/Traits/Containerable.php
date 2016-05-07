@@ -16,7 +16,7 @@ trait Containerable
      *
      * @return Container
      */
-    final public function container()
+    final protected function container()
     {
         return $this->_container;
     }

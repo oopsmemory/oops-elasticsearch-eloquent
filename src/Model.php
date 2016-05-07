@@ -13,7 +13,7 @@ use Isswp101\Persimmon\Traits\Presentable;
 use Isswp101\Persimmon\Traits\Timestampable;
 use Isswp101\Persimmon\Traits\Userable;
 
-class Model implements Arrayable, Jsonable, Stringable
+abstract class Model implements Arrayable, Jsonable, Stringable
 {
     use Idable, Userable, Timestampable;
     use Fillable, Cacheable, Containerable;
@@ -30,4 +30,6 @@ class Model implements Arrayable, Jsonable, Stringable
 
         $this->fill($attributes);
     }
+
+    abstract public function save();
 }
