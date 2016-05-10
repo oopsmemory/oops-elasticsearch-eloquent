@@ -31,5 +31,12 @@ abstract class Model implements Arrayable, Jsonable, Stringable
         $this->fill($attributes);
     }
 
+    public function toArray()
+    {
+        return array_where(get_object_vars($this), function ($key) {
+            return !starts_with($key, '_');
+        });
+    }
+
     abstract public function save();
 }

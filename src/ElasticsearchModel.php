@@ -2,37 +2,19 @@
 
 namespace Isswp101\Persimmon;
 
-use Isswp101\Persimmon\Elasticsearch\Response;
+use Isswp101\Persimmon\Traits\Elasticsearchable;
 
 class ElasticsearchModel extends Model
 {
-    protected static $index;
-
-    protected static $type;
-
-    public static function getIndex()
-    {
-        return static::$index;
-    }
-
-    public static function getType()
-    {
-        return static::$type;
-    }
+    use Elasticsearchable;
 
     public function __construct(array $response = [])
     {
+        $this->validateEsIndexAndType();
+
         parent::__construct();
 
         $this->fillFromResponse($response);
-    }
-
-    public function fillFromResponse(array $response)
-    {
-        $res = new Response($response);
-        $this->fill($res->getSource());
-        $this->setId($res->getId());
-        return $this;
     }
 
     public function save()
