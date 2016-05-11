@@ -35,7 +35,7 @@ trait Elasticsearchable
     /**
      * @throws \Exception
      */
-    protected function validateEsIndexAndType()
+    final protected function validateEsIndexAndType()
     {
         if (!$this->getIndex()) {
             throw new \Exception('Please specify the index for your Elasticsearch model');
@@ -56,5 +56,14 @@ trait Elasticsearchable
         $this->fill($res->getSource());
         $this->setId($res->getId());
         return $this;
+    }
+
+    public function getFullPath()
+    {
+        return [
+            'index' => $this->getIndex(),
+            'type' => $this->getType(),
+            'id' => $this->getId(),
+        ];
     }
 }
