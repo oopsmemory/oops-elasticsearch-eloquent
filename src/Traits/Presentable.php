@@ -2,6 +2,8 @@
 
 namespace Isswp101\Persimmon\Traits;
 
+use Illuminate\Support\Collection;
+
 trait Presentable
 {
     /**
@@ -33,5 +35,15 @@ trait Presentable
     public function __toString()
     {
         return $this->toJson();
+    }
+
+    /**
+     * Get the instance as a collection.
+     *
+     * @return Collection
+     */
+    public function toCollection()
+    {
+        return collect($this->toArray());
     }
 }

@@ -3,9 +3,7 @@
 namespace Isswp101\Persimmon\DAL;
 
 use Elasticsearch\Client;
-use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Isswp101\Persimmon\ElasticsearchModel;
-use Isswp101\Persimmon\Model;
 
 class ElasticsearchDAL implements IDAL
 {
@@ -23,20 +21,15 @@ class ElasticsearchDAL implements IDAL
         return $this->model;
     }
 
-    public function has($id)
-    {
-        return true; // @FIXME
-    }
-
     public function get($id, array $options = [])
     {
-        $params = $this->model->getFullPath();
+        $params = $this->model->getPath()->toArray();
 
-        if (array_key_exists('columns', $options) && $options['columns']) {
+        if (!empty($options['columns'])) {
             $params['_source'] = $options['columns'];
         }
 
-        if (array_key_exists('parent_id', $options) && $options['parent_id']) {
+        if (!empty($options['parent_id'])) {
             $params['parent'] = $options['parent_id'];
         }
 
@@ -45,13 +38,35 @@ class ElasticsearchDAL implements IDAL
         return $this->model->fillFromResponse($response);
     }
 
-    public function put(Model $instance)
+    public function put()
     {
-        // TODO: Implement put() method.
+        $params = $this->model->getPath()->toArray();
+
+        $params['body'] = $this->model->toArray();
+
+        if ($this->model->getParentId()) {
+            $params['parent'] = $this->model->getParentId();
+        }
+
+        if (!$params['id']) {
+            unset($params['id']);
+        }
+
+        $response = $this->client->index($params);
+
+        $this->model->setId($response['_id']);
+
+        return $this->model->getId();
     }
 
-    public function delete($id)
+    public function delete()
     {
-        // TODO: Implement delete() method.
+        $params = $this->model->getPath()->toArray();
+
+        if ($this->model->getParentId()) {
+            $params['parent'] = $this->model->getParentId();
+        }
+
+        return $this->client->delete($params);
     }
 }

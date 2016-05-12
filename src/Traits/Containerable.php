@@ -24,7 +24,7 @@ trait Containerable
     /**
      * Create a new Container instance.
      */
-    protected function initContainer()
+    protected function injectContainer()
     {
         $this->_container = new Container();
     }

@@ -2,6 +2,7 @@
 
 namespace Isswp101\Persimmon\Traits;
 
+use Isswp101\Persimmon\Elasticsearch\DocumentPath;
 use Isswp101\Persimmon\Elasticsearch\Response;
 
 trait Elasticsearchable
@@ -58,12 +59,8 @@ trait Elasticsearchable
         return $this;
     }
 
-    public function getFullPath()
+    public function getPath()
     {
-        return [
-            'index' => $this->getIndex(),
-            'type' => $this->getType(),
-            'id' => $this->getId(),
-        ];
+        return new DocumentPath($this->getIndex(), $this->getType(), $this->getId());
     }
 }

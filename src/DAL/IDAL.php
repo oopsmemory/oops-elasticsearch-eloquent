@@ -13,26 +13,18 @@ interface IDAL
 
     /**
      * @param mixed $id
-     * @return bool
-     */
-    public function has($id);
-
-    /**
-     * @param mixed $id
      * @param array $options
      * @return Model
      */
     public function get($id, array $options = []);
 
     /**
-     * @param Model $instance
      * @return mixed Inserted id.
      */
-    public function put(Model $instance);
+    public function put();
 
     /**
-     * @param mixed $id
      * @return mixed
      */
-    public function delete($id);
+    public function delete();
 }
