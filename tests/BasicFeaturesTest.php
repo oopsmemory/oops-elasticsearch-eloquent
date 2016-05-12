@@ -7,7 +7,7 @@ use Isswp101\Persimmon\DAL\ElasticsearchDAL;
 use Isswp101\Persimmon\Product;
 use Isswp101\Persimmon\Model;
 
-class ExampleTest extends \PHPUnit_Framework_TestCase
+class BasicFeaturesTest extends \PHPUnit_Framework_TestCase
 {
     public function test1()
     {
