@@ -2,8 +2,7 @@
 
 namespace Isswp101\Persimmon;
 
-use Elasticsearch\Client;
-use Isswp101\Persimmon\DAL\ElasticsearchDAL;
+use Isswp101\Persimmon\DAL\IDAL;
 use Isswp101\Persimmon\Traits\Elasticsearchable;
 use Isswp101\Persimmon\Traits\Mappingable;
 use Isswp101\Persimmon\Traits\Relationshipable;
@@ -23,14 +22,9 @@ class ElasticsearchModel extends Model
         $this->fillFromResponse($response);
     }
 
-    protected function injectDataAccessLayer()
+    public function injectDataAccessLayer(IDAL $dal)
     {
-        $this->_dal = new ElasticsearchDAL($this, $this->getElasticsearchClient());
-    }
-
-    protected function getElasticsearchClient()
-    {
-        return new Client();
+        $this->_dal = $dal;
     }
 
     protected function setInnerHits(array $innerHits)

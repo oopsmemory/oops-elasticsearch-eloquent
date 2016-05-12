@@ -10,7 +10,7 @@ class ElasticsearchDAL implements IDAL
     protected $model;
     protected $client;
 
-    public function __construct(ElasticsearchModel $model, Client $client)
+    public function __construct(ElasticsearchModel $model, Client $client = null)
     {
         $this->model = $model;
         $this->client = $client;
