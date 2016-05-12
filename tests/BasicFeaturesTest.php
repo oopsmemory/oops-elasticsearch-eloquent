@@ -16,6 +16,11 @@ class BasicFeaturesTest extends \PHPUnit_Framework_TestCase
      */
     protected $client;
 
+    /**
+     * @var Product
+     */
+    protected $product;
+
     protected function setUp()
     {
         // Env
@@ -39,18 +44,27 @@ class BasicFeaturesTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->client = new Client($params);
-    }
 
-    public function testCreateNewProduct()
-    {
+        // Model
         $product = new Product();
         $product->injectDataAccessLayer(new ElasticsearchDAL($product, $this->client));
+    }
 
-        $product->id = 1;
-        $product->name = 'Product 1';
-        $product->price = 20;
-        $product->save();
+    public function testSave()
+    {
+        $this->product->id = 1;
+        $this->product->name = 'Product 1';
+        $this->product->price = 20;
+        $this->product->save();
+        $this->assertInstanceOf(Model::class, $this->product);
+    }
 
-        $this->assertInstanceOf(Model::class, $product);
+    public function testFind()
+    {
+        $this->product = Product::find(1);
+        $this->assertEquals('Product 1', $this->product->name);
+        $this->assertEquals('20', $this->product->price);
+        $this->assertEquals(1, $this->product->getId());
+        $this->assertInstanceOf(Model::class, $this->product);
     }
 }
