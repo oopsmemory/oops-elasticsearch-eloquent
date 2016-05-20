@@ -98,6 +98,13 @@ class BasicFeaturesTest extends TestCase
         $this->assertInstanceOf(Carbon::class, $product->getUpdatedAt());
     }
 
+    public function testFindBySpecifiedColumns()
+    {
+        $product = Product::find(1, ['name']);
+        $this->assertEquals('Product 1', $product->name);
+        $this->assertEquals(0, $product->price);
+    }
+
     public function testFind()
     {
         $product = Product::find(1);
@@ -128,5 +135,17 @@ class BasicFeaturesTest extends TestCase
     {
         $this->setExpectedException(ModelNotFoundException::class);
         Product::findOrFail(2);
+    }
+
+    public function testPartialUpdate()
+    {
+        $product = Product::find(1, ['name']);
+        $product->name = 'Product 3';
+        $product->save('name');
+
+        $res = $this->es->get($product->getPath()->toArray());
+
+        $this->assertEquals('Product 3', $res['_source']['name']);
+        $this->assertEquals(20, $res['_source']['price']);
     }
 }

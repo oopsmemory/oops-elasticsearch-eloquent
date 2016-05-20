@@ -89,8 +89,7 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
      */
     public function save($columns = ['*'])
     {
-        $columns = is_array($columns) ? $columns : [$columns];
-        // @TODO: implement columns
+        $columns = $columns ? (array)$columns : ['*'];
 
         if ($this->saving() === false) {
             return false;
@@ -98,7 +97,7 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
 
         $this->fillTimestamp();
 
-        $this->_dal->put();
+        $this->_dal->put($columns);
 
         $this->_exist = true;
 

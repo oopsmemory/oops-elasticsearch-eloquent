@@ -38,21 +38,29 @@ class ElasticsearchDAL implements IDAL
         return $this->model->fillFromResponse($response);
     }
 
-    public function put()
+    public function put(array $columns = ['*'])
     {
         $params = $this->model->getPath()->toArray();
-
-        $params['body'] = $this->model->toArray();
 
         if ($this->model->getParentId()) {
             $params['parent'] = $this->model->getParentId();
         }
 
-        if (!$params['id']) {
-            unset($params['id']);
-        }
+        if (!$this->model->_exist || $columns == ['*']) {
+            if (!$params['id']) {
+                unset($params['id']);
+            }
 
-        $response = $this->client->index($params);
+            $params['body'] = $this->model->toArray();
+
+            $response = $this->client->index($params);
+        } else {
+            $params['body'] = [
+                'doc' => array_only($this->model->toArray(), $columns)
+            ];
+
+            $response = $this->client->update($params);
+        }
 
         $this->model->setId($response['_id']);
 

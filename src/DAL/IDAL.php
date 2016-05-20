@@ -19,9 +19,10 @@ interface IDAL
     public function get($id, array $options = []);
 
     /**
+     * @param array $columns
      * @return mixed Inserted id.
      */
-    public function put();
+    public function put(array $columns = ['*']);
 
     /**
      * @return mixed
