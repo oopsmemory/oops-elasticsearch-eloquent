@@ -40,11 +40,7 @@ class ElasticsearchDAL implements IDAL
 
     public function put(array $columns = ['*'])
     {
-        $params = $this->model->getPath()->toArray();
-
-        if ($this->model->getParentId()) {
-            $params['parent'] = $this->model->getParentId();
-        }
+        $params = $this->getParams();
 
         if (!$this->model->_exist || $columns == ['*']) {
             if (!$params['id']) {
@@ -69,12 +65,40 @@ class ElasticsearchDAL implements IDAL
 
     public function delete()
     {
+        return $this->client->delete($this->getParams());
+    }
+
+    protected function getParams()
+    {
         $params = $this->model->getPath()->toArray();
 
         if ($this->model->getParentId()) {
             $params['parent'] = $this->model->getParentId();
         }
 
-        return $this->client->delete($params);
+        return $params;
+    }
+
+    public function search(array $query)
+    {
+        if (empty($query['body']['query']) && empty($query['body']['filter'])) {
+            $query['body']['query'] = [
+                'match_all' => []
+            ];
+        }
+
+        $params = [
+            'index' => $this->model->getIndex(),
+            'type' => $this->model->getType(),
+            'from' => array_get($query, 'from', 0),
+            'size' => array_get($query, 'size', 50),
+            'body' => $query['body']
+        ];
+
+        if ($this->model->hasLogger()) {
+            $this->model->getLogger()->debug('Query', $params);
+        }
+
+        return $this->client->search($params);
     }
 }

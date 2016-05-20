@@ -3,6 +3,7 @@
 namespace Isswp101\Persimmon;
 
 use Elasticsearch\Client;
+use Illuminate\Contracts\Logging\Log;
 use Isswp101\Persimmon\DAL\ElasticsearchDAL;
 use Isswp101\Persimmon\Traits\Elasticsearchable;
 use Isswp101\Persimmon\Traits\Mappingable;
@@ -24,6 +25,7 @@ class ElasticsearchModel extends Model
     public function injectDependencies()
     {
         $this->injectDataAccessLayer(new ElasticsearchDAL($this, app(Client::class)));
+        // $this->injectLogger(app(Log::class));
     }
 
     public static function findWithParentId($id, $parentId, array $columns = ['*'])
