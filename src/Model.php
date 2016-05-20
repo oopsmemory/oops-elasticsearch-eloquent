@@ -75,6 +75,8 @@ abstract class Model implements Arrayable, Jsonable, Stringable
             return false;
         }
 
+        $this->fillTimestamp();
+
         $this->_dal->put();
 
         // self::cache()->put($id, $this);

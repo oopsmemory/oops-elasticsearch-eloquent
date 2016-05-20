@@ -2,29 +2,30 @@
 
 namespace Isswp101\Persimmon\Traits;
 
+use Carbon\Carbon;
+
 trait Timestampable
 {
     /**
-     * @var
+     * @var Carbon
      */
     public $created_at;
 
     /**
-     * @var
+     * @var Carbon
      */
     public $updated_at;
 
     /**
-     * @return mixed
+     * @return Carbon
      */
     public function getCreatedAt()
     {
-        // @TODO: return \Carbon instance
-        return $this->created_at;
+        return Carbon::parse($this->created_at);
     }
 
     /**
-     * @param mixed $created_at
+     * @param string $created_at
      */
     public function setCreatedAt($created_at)
     {
@@ -32,19 +33,29 @@ trait Timestampable
     }
 
     /**
-     * @return mixed
+     * @return Carbon
      */
     public function getUpdatedAt()
     {
-        // @TODO: return \Cabron instance
-        return $this->updated_at;
+        return Carbon::parse($this->updated_at);
     }
 
     /**
-     * @param mixed $updated_at
+     * @param string $updated_at
      */
     public function setUpdatedAt($updated_at)
     {
         $this->updated_at = $updated_at;
+    }
+
+    protected function fillTimestamp()
+    {
+        $utc = Carbon::now('UTC')->toDateTimeString();
+
+        $this->setUpdatedAt($utc);
+
+        if (!$this->_exist) {
+            $this->setCreatedAt($utc);
+        }
     }
 }

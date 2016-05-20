@@ -2,8 +2,10 @@
 
 namespace Isswp101\Persimmon\Test;
 
+use Carbon\Carbon;
 use Dotenv\Dotenv;
 use Elasticsearch\Client;
+use Isswp101\Persimmon\ElasticsearchModel;
 use Isswp101\Persimmon\Model;
 use Isswp101\Persimmon\Product;
 use Monolog\Logger;
@@ -77,10 +79,11 @@ class BasicFeaturesTest extends TestCase
         $this->product->name = 'Product 1';
         $this->product->price = 20;
         $this->product->save();
+
         $this->assertInstanceOf(Model::class, $this->product);
+        $this->assertInstanceOf(ElasticsearchModel::class, $this->product);
 
         $res = $this->es->get($this->product->getPath()->toArray());
-        dd($res);
 
         $this->assertEquals($this->product->getIndex(), $res['_index']);
         $this->assertEquals($this->product->getType(), $res['_type']);
@@ -89,6 +92,11 @@ class BasicFeaturesTest extends TestCase
         $this->assertEquals(1, $res['_id']);
         $this->assertEquals('Product 1', $res['_source']['name']);
         $this->assertEquals(20, $res['_source']['price']);
+
+        $this->assertNotNull($res['_source']['created_at']);
+        $this->assertNotNull($res['_source']['updated_at']);
+        $this->assertInstanceOf(Carbon::class, $this->product->getCreatedAt());
+        $this->assertInstanceOf(Carbon::class, $this->product->getUpdatedAt());
     }
 
     public function testFind()
