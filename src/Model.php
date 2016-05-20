@@ -18,9 +18,10 @@ use Isswp101\Persimmon\Traits\Mergeable;
 use Isswp101\Persimmon\Traits\Presentable;
 use Isswp101\Persimmon\Traits\Timestampable;
 use Isswp101\Persimmon\Traits\Userable;
+use JsonSerializable;
 use ReflectionClass;
 
-abstract class Model implements Arrayable, Jsonable, Stringable
+abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializable
 {
     use Idable, Userable, Timestampable;
     use Fillable, Cacheable, Containerable;
@@ -50,6 +51,11 @@ abstract class Model implements Arrayable, Jsonable, Stringable
         $this->fill($attributes);
     }
 
+    /**
+     * Inject data access layer.
+     *
+     * @param IDAL $dal
+     */
     protected function injectDataAccessLayer(IDAL $dal)
     {
         $this->_dal = $dal;
@@ -57,11 +63,22 @@ abstract class Model implements Arrayable, Jsonable, Stringable
 
     abstract public function injectDependencies();
 
+    /**
+     * {@inheritdoc}
+     */
     public function toArray()
     {
         return array_where(get_object_vars($this), function ($key) {
             return !starts_with($key, '_');
         });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 
     /**
