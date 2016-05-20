@@ -8,6 +8,7 @@ use Elasticsearch\Client;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Isswp101\Persimmon\ElasticsearchModel;
 use Isswp101\Persimmon\Model;
+use Isswp101\Persimmon\Test\Models\Product;
 use Monolog\Logger;
 use Orchestra\Testbench\TestCase;
 
