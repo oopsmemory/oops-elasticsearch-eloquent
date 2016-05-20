@@ -5,6 +5,7 @@ namespace Isswp101\Persimmon\Test;
 use Carbon\Carbon;
 use Dotenv\Dotenv;
 use Elasticsearch\Client;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Isswp101\Persimmon\ElasticsearchModel;
 use Isswp101\Persimmon\Model;
 use Monolog\Logger;
@@ -115,10 +116,17 @@ class BasicFeaturesTest extends TestCase
     {
         $product = Product::find(1);
         $product->name = 'Product 2';
+        sleep(1);
         $product->save();
 
         $res = $this->es->get($product->getPath()->toArray());
         $this->assertEquals('Product 2', $res['_source']['name']);
         $this->assertNotSame($res['_source']['created_at'], $res['_source']['updated_at']);
+    }
+
+    public function testFindOrFail()
+    {
+        $this->setExpectedException(ModelNotFoundException::class);
+        Product::findOrFail(2);
     }
 }
