@@ -43,12 +43,19 @@ abstract class Model implements Arrayable, Jsonable, Stringable
      */
     public function __construct(array $attributes = [])
     {
+        $this->injectDependencies();
+
         $this->injectContainer();
 
         $this->fill($attributes);
     }
 
-    abstract public function injectDataAccessLayer(IDAL $dal);
+    protected function injectDataAccessLayer(IDAL $dal)
+    {
+        $this->_dal = $dal;
+    }
+
+    abstract public function injectDependencies();
 
     public function toArray()
     {

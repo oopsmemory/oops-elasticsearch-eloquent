@@ -4,50 +4,71 @@ namespace Isswp101\Persimmon\Test;
 
 use Dotenv\Dotenv;
 use Elasticsearch\Client;
-use Isswp101\Persimmon\DAL\ElasticsearchDAL;
 use Isswp101\Persimmon\Model;
 use Isswp101\Persimmon\Product;
 use Monolog\Logger;
+use Orchestra\Testbench\TestCase;
 
-class BasicFeaturesTest extends \PHPUnit_Framework_TestCase
+class BasicFeaturesTest extends TestCase
 {
     /**
      * @var Client
      */
-    protected $client;
+    protected $es;
 
     /**
      * @var Product
      */
     protected $product;
 
-    protected function setUp()
+    /**
+     * Setup the test environment.
+     */
+    public function setUp()
     {
-        // Env
+        parent::setUp();
+
+        $this->loadDotenv();
+
+        $this->es = app(Client::class);
+
+        $this->product = new Product();
+    }
+
+    /**
+     * Load Dotenv.
+     */
+    protected function loadDotenv()
+    {
         $dotenv = new Dotenv(__DIR__);
         $dotenv->load();
+    }
 
-        // Elasticsearch client
-        $params = [
-            'hosts' => [
-                env('ELASTICSEARCH_HOSTS', '')
-            ],
-            'logPath' => 'app/storage/logs',
-            'logLevel' => Logger::INFO,
-            'connectionParams' => [
-                'auth' => [
-                    env('ELASTICSEARCH_AUTH_USER', ''),
-                    env('ELASTICSEARCH_AUTH_PASS', ''),
-                    'Basic'
+    /**
+     * Define environment setup.
+     *
+     * @param \Illuminate\Foundation\Application $app
+     * @return void
+     */
+    protected function getEnvironmentSetUp($app)
+    {
+        $app->singleton(Client::class, function () {
+            $params = [
+                'hosts' => [
+                    env('ELASTICSEARCH_HOSTS', '')
+                ],
+                'logPath' => 'app/storage/logs',
+                'logLevel' => Logger::INFO,
+                'connectionParams' => [
+                    'auth' => [
+                        env('ELASTICSEARCH_AUTH_USER', ''),
+                        env('ELASTICSEARCH_AUTH_PASS', ''),
+                        'Basic'
+                    ]
                 ]
-            ]
-        ];
-
-        $this->client = new Client($params);
-
-        // Model
-        $product = new Product();
-        $product->injectDataAccessLayer(new ElasticsearchDAL($product, $this->client));
+            ];
+            return new Client($params);
+        });
     }
 
     public function testSave()
@@ -57,6 +78,17 @@ class BasicFeaturesTest extends \PHPUnit_Framework_TestCase
         $this->product->price = 20;
         $this->product->save();
         $this->assertInstanceOf(Model::class, $this->product);
+
+        $res = $this->es->get($this->product->getPath()->toArray());
+        dd($res);
+
+        $this->assertEquals($this->product->getIndex(), $res['_index']);
+        $this->assertEquals($this->product->getType(), $res['_type']);
+        $this->assertEquals($this->product->getId(), $res['_id']);
+
+        $this->assertEquals(1, $res['_id']);
+        $this->assertEquals('Product 1', $res['_source']['name']);
+        $this->assertEquals(20, $res['_source']['price']);
     }
 
     public function testFind()

@@ -18,6 +18,11 @@ trait Elasticsearchable
     protected static $type = null;
 
     /**
+     * @var array
+     */
+    public $_innerHits = [];
+
+    /**
      * @return string
      */
     final public static function getIndex()
@@ -45,6 +50,22 @@ trait Elasticsearchable
         if (!$this->getType()) {
             throw new \Exception('Please specify the type for your Elasticsearch model');
         }
+    }
+
+    /**
+     * @param array $innerHits
+     */
+    protected function setInnerHits(array $innerHits)
+    {
+        $this->_innerHits = $innerHits;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getInnerHits()
+    {
+        return $this->_innerHits;
     }
 
     /**
