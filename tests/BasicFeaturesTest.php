@@ -149,4 +149,12 @@ class BasicFeaturesTest extends TestCase
         $this->assertEquals('Product 3', $res['_source']['name']);
         $this->assertEquals(20, $res['_source']['price']);
     }
+    public function testFindOrNew() {
+        $product = Product::findOrNew(2);
+
+        $this->assertFalse($product->_exist);   // product not saved
+        $this->assertEquals(2, $product->getId());
+        $this->assertInstanceOf(Model::class, $product);
+        $this->assertInstanceOf(ElasticsearchModel::class, $product);
+    }
 }
