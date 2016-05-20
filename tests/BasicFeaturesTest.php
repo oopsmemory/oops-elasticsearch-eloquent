@@ -133,7 +133,7 @@ class BasicFeaturesTest extends TestCase
 
     public function testFindOrFail()
     {
-        $this->setExpectedException(ModelNotFoundException::class);
+        $this->expectException(ModelNotFoundException::class);
         Product::findOrFail(2);
     }
 
