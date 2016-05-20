@@ -67,6 +67,17 @@ class BasicFeaturesTest extends TestCase
         });
     }
 
+    public function testFill()
+    {
+        $p1 = new Product();
+        $p1->id = 1;
+        $p1->name = 'name';
+
+        $p2 = new Product(['id' => 1, 'name' => 'name']);
+
+        $this->assertSame($p1->toArray(), $p2->toArray());
+    }
+
     public function testSave()
     {
         $product = new Product();

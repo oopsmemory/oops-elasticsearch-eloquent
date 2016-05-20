@@ -2,6 +2,7 @@
 
 namespace Isswp101\Persimmon\Traits;
 
+use Exception;
 use Isswp101\Persimmon\Elasticsearch\DocumentPath;
 use Isswp101\Persimmon\Elasticsearch\Response;
 
@@ -41,14 +42,14 @@ trait Elasticsearchable
     /**
      * @throws \Exception
      */
-    final protected function validateEsIndexAndType()
+    final protected function validateIndexAndType()
     {
         if (!$this->getIndex()) {
-            throw new \Exception('Please specify the index for your Elasticsearch model');
+            throw new Exception('Please specify the index for your Elasticsearch model');
         }
 
         if (!$this->getType()) {
-            throw new \Exception('Please specify the type for your Elasticsearch model');
+            throw new Exception('Please specify the type for your Elasticsearch model');
         }
     }
 

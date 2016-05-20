@@ -13,13 +13,11 @@ class ElasticsearchModel extends Model
 {
     use Elasticsearchable, Mappingable, Relationshipable;
 
-    public function __construct(array $response = [])
+    public function __construct(array $attributes = [])
     {
-        $this->validateEsIndexAndType();
+        $this->validateIndexAndType();
 
-        parent::__construct();
-
-        $this->fillFromResponse($response);
+        parent::__construct($attributes);
     }
 
     public function injectDependencies()
