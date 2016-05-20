@@ -79,6 +79,8 @@ abstract class Model implements Arrayable, Jsonable, Stringable
 
         $this->_dal->put();
 
+        $this->_exist = true;
+
         // self::cache()->put($id, $this);
 
         if ($this->saved() === false) {

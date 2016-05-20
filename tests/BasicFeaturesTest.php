@@ -19,11 +19,6 @@ class BasicFeaturesTest extends TestCase
     protected $es;
 
     /**
-     * @var Product
-     */
-    protected $product;
-
-    /**
      * Setup the test environment.
      */
     public function setUp()
@@ -33,8 +28,6 @@ class BasicFeaturesTest extends TestCase
         $this->loadDotenv();
 
         $this->es = app(Client::class);
-
-        $this->product = new Product();
     }
 
     /**
@@ -75,19 +68,25 @@ class BasicFeaturesTest extends TestCase
 
     public function testSave()
     {
-        $this->product->id = 1;
-        $this->product->name = 'Product 1';
-        $this->product->price = 20;
-        $this->product->save();
+        $product = new Product();
+        $product->id = 1;
+        $product->name = 'Product 1';
+        $product->price = 20;
 
-        $this->assertInstanceOf(Model::class, $this->product);
-        $this->assertInstanceOf(ElasticsearchModel::class, $this->product);
+        $this->assertFalse($product->_exist);
 
-        $res = $this->es->get($this->product->getPath()->toArray());
+        $product->save();
 
-        $this->assertEquals($this->product->getIndex(), $res['_index']);
-        $this->assertEquals($this->product->getType(), $res['_type']);
-        $this->assertEquals($this->product->getId(), $res['_id']);
+        $this->assertTrue($product->_exist);
+
+        $this->assertInstanceOf(Model::class, $product);
+        $this->assertInstanceOf(ElasticsearchModel::class, $product);
+
+        $res = $this->es->get($product->getPath()->toArray());
+
+        $this->assertEquals($product->getIndex(), $res['_index']);
+        $this->assertEquals($product->getType(), $res['_type']);
+        $this->assertEquals($product->getId(), $res['_id']);
 
         $this->assertEquals(1, $res['_id']);
         $this->assertEquals('Product 1', $res['_source']['name']);
@@ -95,16 +94,32 @@ class BasicFeaturesTest extends TestCase
 
         $this->assertNotNull($res['_source']['created_at']);
         $this->assertNotNull($res['_source']['updated_at']);
-        $this->assertInstanceOf(Carbon::class, $this->product->getCreatedAt());
-        $this->assertInstanceOf(Carbon::class, $this->product->getUpdatedAt());
+        $this->assertInstanceOf(Carbon::class, $product->getCreatedAt());
+        $this->assertInstanceOf(Carbon::class, $product->getUpdatedAt());
     }
 
     public function testFind()
     {
-        $this->product = Product::find(1);
-        $this->assertEquals('Product 1', $this->product->name);
-        $this->assertEquals('20', $this->product->price);
-        $this->assertEquals(1, $this->product->getId());
-        $this->assertInstanceOf(Model::class, $this->product);
+        $product = Product::find(1);
+
+        $this->assertTrue($product->_exist);
+
+        $this->assertEquals('Product 1', $product->name);
+        $this->assertEquals('20', $product->price);
+        $this->assertEquals(1, $product->getId());
+
+        $this->assertInstanceOf(Model::class, $product);
+        $this->assertInstanceOf(ElasticsearchModel::class, $product);
+    }
+
+    public function testUpdate()
+    {
+        $product = Product::find(1);
+        $product->name = 'Product 2';
+        $product->save();
+
+        $res = $this->es->get($product->getPath()->toArray());
+        $this->assertEquals('Product 2', $res['_source']['name']);
+        $this->assertNotSame($res['_source']['created_at'], $res['_source']['updated_at']);
     }
 }
