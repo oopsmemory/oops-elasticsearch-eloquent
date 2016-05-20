@@ -7,7 +7,6 @@ use Dotenv\Dotenv;
 use Elasticsearch\Client;
 use Isswp101\Persimmon\ElasticsearchModel;
 use Isswp101\Persimmon\Model;
-use Isswp101\Persimmon\Product;
 use Monolog\Logger;
 use Orchestra\Testbench\TestCase;
 

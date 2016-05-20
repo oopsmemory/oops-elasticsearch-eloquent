@@ -1,6 +1,8 @@
 <?php
 
-namespace Isswp101\Persimmon;
+namespace Isswp101\Persimmon\Test;
+
+use Isswp101\Persimmon\ElasticsearchModel;
 
 class Product extends ElasticsearchModel
 {
