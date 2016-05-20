@@ -84,10 +84,14 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
     /**
      * Save the model.
      *
+     * @param array $columns
      * @return bool
      */
-    public function save()
+    public function save($columns = ['*'])
     {
+        $columns = is_array($columns) ? $columns : [$columns];
+        // @TODO: implement columns
+
         if ($this->saving() === false) {
             return false;
         }
