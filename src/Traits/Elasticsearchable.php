@@ -4,6 +4,7 @@ namespace Isswp101\Persimmon\Traits;
 
 use Exception;
 use Isswp101\Persimmon\Elasticsearch\DocumentPath;
+use Isswp101\Persimmon\Elasticsearch\InnerHits;
 use Isswp101\Persimmon\Elasticsearch\Response;
 
 trait Elasticsearchable
@@ -11,17 +12,32 @@ trait Elasticsearchable
     /**
      * @var string
      */
-    protected static $index = null;
+    protected static $index;
 
     /**
      * @var string
      */
-    protected static $type = null;
+    protected static $type;
 
     /**
-     * @var array
+     * @var string
      */
-    public $_innerHits = [];
+    protected static $parentType;
+
+    /**
+     * @var InnerHits
+     */
+    public $_innerHits;
+
+    /**
+     * @var float
+     */
+    public $_score;
+
+    /**
+     * @var int
+     */
+    public $_position;
 
     /**
      * @return string
@@ -40,6 +56,14 @@ trait Elasticsearchable
     }
 
     /**
+     * @return string
+     */
+    final public static function getParentType()
+    {
+        return static::$parentType;
+    }
+
+    /**
      * @throws \Exception
      */
     final protected function validateIndexAndType()
@@ -54,15 +78,15 @@ trait Elasticsearchable
     }
 
     /**
-     * @param array $innerHits
+     * @param InnerHits $innerHits
      */
-    protected function setInnerHits(array $innerHits)
+    protected function setInnerHits(InnerHits $innerHits)
     {
         $this->_innerHits = $innerHits;
     }
 
     /**
-     * @return array
+     * @return InnerHits
      */
     protected function getInnerHits()
     {
@@ -73,11 +97,23 @@ trait Elasticsearchable
      * @param array $response
      * @return $this
      */
-    public function fillFromResponse(array $response)
+    public function fillByResponse(array $response)
     {
         $res = new Response($response);
         $this->fill($res->getSource());
         $this->setId($res->getId());
+        return $this;
+    }
+
+    /**
+     * @param array $response
+     * @return $this
+     */
+    public function fillByInnerHits(array $response)
+    {
+        $innerHits = new InnerHits($response);
+        $this->setInnerHits($innerHits);
+        $this->setParentId($innerHits->getParentId($this->getParentType()));
         return $this;
     }
 

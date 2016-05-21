@@ -3,6 +3,7 @@
 namespace Isswp101\Persimmon\DAL;
 
 use Elasticsearch\Client;
+use Isswp101\Persimmon\Cache\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\ElasticsearchModel;
 
 class ElasticsearchDAL implements IDAL
@@ -35,7 +36,7 @@ class ElasticsearchDAL implements IDAL
 
         $response = $this->client->get($params);
 
-        return $this->model->fillFromResponse($response);
+        return $this->model->fillByResponse($response);
     }
 
     public function put(array $columns = ['*'])
@@ -95,10 +96,28 @@ class ElasticsearchDAL implements IDAL
             'body' => $query['body']
         ];
 
+        // @TODO: use own logger, not model logger
         if ($this->model->hasLogger()) {
             $this->model->getLogger()->debug('Query', $params);
         }
 
-        return $this->client->search($params);
+        $collection = new ElasticsearchCollection();
+
+        $response = $this->client->search($params);
+
+        $collection->response($response);
+
+        $from = $params['from'];
+        foreach ($response['hits']['hits'] as $hit) {
+            $model = new ElasticsearchModel();
+            $model->_score = $hit['_score'];
+            $model->_position = $from++;
+            $model->_exist = true;
+            $model->fillByResponse($hit);
+            $model->fillByInnerHits($hit);
+            $collection->put($model->getId(), $model);
+        }
+
+        return $collection;
     }
 }

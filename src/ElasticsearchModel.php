@@ -22,6 +22,7 @@ class ElasticsearchModel extends Model
 
     public function injectDependencies()
     {
+        // @TODO: move logger to DAL
         $this->injectDataAccessLayer(new ElasticsearchDAL($this, app(Client::class)));
         // $this->injectLogger(app(Log::class));
     }
