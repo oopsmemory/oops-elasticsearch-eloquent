@@ -121,4 +121,9 @@ trait Elasticsearchable
     {
         return new DocumentPath($this->getIndex(), $this->getType(), $this->getId());
     }
+
+    public function getPosition()
+    {
+        return $this->_position;
+    }
 }
