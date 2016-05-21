@@ -267,9 +267,6 @@ class BasicFeaturesTest extends TestCase
         $this->assertEquals(2, $products->count());
     }
 
-    /**
-     * @group failing
-     */
     public function testAggregation()
     {
         $query = new QueryBuilder();
@@ -278,5 +275,17 @@ class BasicFeaturesTest extends TestCase
         $buckets = $products->getAggregation('name');
         $this->assertEquals('product', $buckets[0]->getKey());
         $this->assertEquals(3, $buckets[0]->getCount());
+    }
+
+    /**
+     * @group failing
+     */
+    public function testPagination()
+    {
+        $product = Product::find(1);
+        $product->_position = 0;
+        $product->makePagination();
+        $this->assertEquals(3, $product->getPrevious()->getId());
+        $this->assertEquals(2, $product->getNext()->getId());
     }
 }

@@ -9,13 +9,13 @@ use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\DAL\ElasticsearchDAL;
 use Isswp101\Persimmon\QueryBuilder\QueryBuilder;
 use Isswp101\Persimmon\Traits\Elasticsearchable;
-use Isswp101\Persimmon\Traits\Mappingable;
+use Isswp101\Persimmon\Traits\Paginationable;
 use Isswp101\Persimmon\Traits\Relationshipable;
 use ReflectionClass;
 
 class ElasticsearchModel extends Model
 {
-    use Elasticsearchable, Mappingable, Relationshipable;
+    use Elasticsearchable, Paginationable, Relationshipable;
 
     /**
      * @var ElasticsearchDAL
