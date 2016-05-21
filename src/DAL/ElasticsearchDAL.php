@@ -3,7 +3,7 @@
 namespace Isswp101\Persimmon\DAL;
 
 use Elasticsearch\Client;
-use Isswp101\Persimmon\Cache\Collection\ElasticsearchCollection;
+use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\ElasticsearchModel;
 
 class ElasticsearchDAL implements IDAL
@@ -109,7 +109,7 @@ class ElasticsearchDAL implements IDAL
 
         $from = $params['from'];
         foreach ($response['hits']['hits'] as $hit) {
-            $model = new ElasticsearchModel();
+            $model = $this->model->createInstance();
             $model->_score = $hit['_score'];
             $model->_position = $from++;
             $model->_exist = true;

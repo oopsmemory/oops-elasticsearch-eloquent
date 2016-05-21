@@ -1,6 +1,6 @@
 <?php
 
-namespace Isswp101\Persimmon\Cache\Collection;
+namespace Isswp101\Persimmon\Collection;
 
 use Illuminate\Support\Collection;
 

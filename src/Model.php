@@ -133,9 +133,9 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
     }
 
     /**
-     * @return Model
+     * @return static
      */
-    final protected static function createInstance()
+    final public static function createInstance()
     {
         return new static();
     }

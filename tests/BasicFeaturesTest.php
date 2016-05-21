@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Dotenv\Dotenv;
 use Elasticsearch\Client;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\ElasticsearchModel;
 use Isswp101\Persimmon\Model;
 use Isswp101\Persimmon\Test\Models\Product;
@@ -159,5 +160,19 @@ class BasicFeaturesTest extends TestCase
 
         $this->assertEquals('Product 3', $res['_source']['name']);
         $this->assertEquals(20, $res['_source']['price']);
+    }
+
+    public function testBasicSearch()
+    {
+        $products = Product::search();
+        $product = $products->first();
+
+        $this->assertInstanceOf(ElasticsearchCollection::class, $products);
+        $this->assertInstanceOf(Product::class, $product);
+        $this->assertEquals(1, $products->count());
+        $this->assertEquals(1, $product->getId());
+        $this->assertEquals(0, $product->_position);
+        $this->assertNotNull($product->_score);
+        $this->assertTrue($product->_exist);
     }
 }

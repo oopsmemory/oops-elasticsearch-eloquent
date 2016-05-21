@@ -69,11 +69,11 @@ trait Elasticsearchable
     final protected function validateIndexAndType()
     {
         if (!$this->getIndex()) {
-            throw new Exception('Please specify the index for your Elasticsearch model');
+            throw new Exception(sprintf('Please specify the index for your Elasticsearch model %s', static::class));
         }
 
         if (!$this->getType()) {
-            throw new Exception('Please specify the type for your Elasticsearch model');
+            throw new Exception(sprintf('Please specify the type for your Elasticsearch model %s', static::class));
         }
     }
 
