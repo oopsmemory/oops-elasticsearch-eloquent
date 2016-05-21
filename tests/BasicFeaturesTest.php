@@ -6,9 +6,13 @@ use Carbon\Carbon;
 use Dotenv\Dotenv;
 use Elasticsearch\Client;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\ElasticsearchModel;
 use Isswp101\Persimmon\Model;
+use Isswp101\Persimmon\QueryBuilder\Aggregations\TermsAggregation;
+use Isswp101\Persimmon\QueryBuilder\Filters\TermFilter;
+use Isswp101\Persimmon\QueryBuilder\QueryBuilder;
 use Isswp101\Persimmon\Test\Models\Product;
 use Monolog\Logger;
 use Orchestra\Testbench\TestCase;
@@ -172,7 +176,107 @@ class BasicFeaturesTest extends TestCase
         $this->assertEquals(1, $products->count());
         $this->assertEquals(1, $product->getId());
         $this->assertEquals(0, $product->_position);
+        $this->assertEquals($products->count(), $products->getTotal());
         $this->assertNotNull($product->_score);
         $this->assertTrue($product->_exist);
+    }
+
+    public function testFirst()
+    {
+        $product = Product::first();
+        $this->assertInstanceOf(Product::class, $product);
+        $this->assertEquals(1, $product->getId());
+        $this->assertEquals(0, $product->_position);
+        $this->assertTrue($product->_exist);
+    }
+
+    public function testAll()
+    {
+        $products = Product::all();
+        $this->assertInstanceOf(Collection::class, $products);
+        $this->assertEquals(1, $products->count());
+    }
+
+    public function testMap()
+    {
+        $total = Product::map([], function (Product $product) {
+            $this->assertInstanceOf(Product::class, $product);
+            $this->assertEquals(1, $product->getId());
+            $this->assertEquals(0, $product->_position);
+            $this->assertTrue($product->_exist);
+        });
+        $this->assertEquals(1, $total);
+    }
+
+    public function testCreate()
+    {
+        $product = Product::create(['id' => 3, 'name' => 'Product 3', 'price' => 30]);
+
+        $this->assertInstanceOf(Product::class, $product);
+        $this->assertTrue($product->_exist);
+
+        $res = $this->es->get($product->getPath()->toArray());
+
+        $this->assertEquals($product->getIndex(), $res['_index']);
+        $this->assertEquals($product->getType(), $res['_type']);
+        $this->assertEquals($product->getId(), $res['_id']);
+
+        $this->assertEquals(3, $res['_id']);
+        $this->assertEquals('Product 3', $res['_source']['name']);
+        $this->assertEquals(30, $res['_source']['price']);
+
+        $this->assertNotNull($res['_source']['created_at']);
+        $this->assertNotNull($res['_source']['updated_at']);
+        $this->assertInstanceOf(Carbon::class, $product->getCreatedAt());
+        $this->assertInstanceOf(Carbon::class, $product->getUpdatedAt());
+    }
+
+    public function testBasicFilters()
+    {
+        Product::create(['id' => 1, 'name' => 'Product 1', 'price' => 10]);
+        Product::create(['id' => 2, 'name' => 'Product 2', 'price' => 20]);
+        Product::create(['id' => 3, 'name' => 'Product 3', 'price' => 30]);
+
+        $query = new QueryBuilder();
+        $query->match('name', 'Product');
+        $products = Product::search($query);
+        $this->assertEquals(3, $products->count());
+
+        $query = new QueryBuilder(['query' => ['match' => ['name' => 'Product']]]);
+        $products = Product::search($query);
+        $this->assertEquals(3, $products->count());
+
+        $query = new QueryBuilder();
+        $query->betweenOrEquals('price', 20, 30)->greaterThan('price', 15);
+        $products = Product::search($query);
+        $this->assertEquals(2, $products->count());
+
+        $query = new QueryBuilder();
+        $query->orMatch('name', '1')->orMatch('name', '2');
+        $products = Product::search($query);
+        $this->assertEquals(2, $products->count());
+
+        $query = new QueryBuilder();
+        $query->filter(new TermFilter('name', '2'));
+        $products = Product::search($query);
+        $this->assertEquals(1, $products->count());
+
+        $query = new QueryBuilder();
+        $query->filter(new TermFilter('name', ['2', '3']));
+        $products = Product::search($query);
+        $this->assertEquals(2, $products->count());
+    }
+
+    /**
+     * @group failing
+     */
+    public function testAggregation()
+    {
+        $query = new QueryBuilder();
+        $query->aggregation(new TermsAggregation('name'))->size(0);
+        $products = Product::search($query);
+        $buckets = $products->getAggregation('name');
+        $this->assertEquals('product', $buckets[0]->getKey());
+        $this->assertEquals(3, $buckets[0]->getCount());
     }
 }

@@ -2,6 +2,9 @@
 
 namespace Isswp101\Persimmon\QueryBuilder;
 
+use Isswp101\Persimmon\QueryBuilder\Aggregations\Aggregation;
+use Isswp101\Persimmon\QueryBuilder\Filters\Filter;
+
 class QueryBuilder
 {
     /**
@@ -60,17 +63,18 @@ class QueryBuilder
     }
 
     /**
-     * @param array|Filter $filter
+     * @param Filter|array $filter
      * @param string $mode
      * @return $this
      */
-    public function filter($filter = [], $mode = 'include')
+    public function filter($filter = [], $mode = Filter::MODE_INCLUDE)
     {
         $map = [
-            'include' => 'must',
-            'exclude' => 'must_not',
+            Filter::MODE_INCLUDE => 'must',
+            Filter::MODE_EXCLUDE => 'must_not',
             'should' => 'should'
         ];
+
         $mode = $map[$mode];
 
         if (!$filter) {
@@ -88,7 +92,7 @@ class QueryBuilder
     }
 
     /**
-     * Specify the fields that will be retrieved when searching.
+     * Set _source to search query.
      *
      * @param mixed $fields
      * @return $this
@@ -106,7 +110,7 @@ class QueryBuilder
     }
 
     /**
-     * Return only ids.
+     * Return only _id.
      *
      * @return $this
      */
@@ -140,15 +144,16 @@ class QueryBuilder
      */
     public function __toString()
     {
-        return json_encode($this->getQuery(), JSON_PRETTY_PRINT);
+        return $this->toJson();
     }
 
     /**
+     * @param int $options
      * @return string
      */
-    public function toJson()
+    public function toJson($options = 0)
     {
-        return json_encode($this->getQuery());
+        return json_encode($this->getQuery(), $options);
     }
 
     protected function merge(array $query, $mode = 'must')
@@ -158,6 +163,7 @@ class QueryBuilder
         }
 
         $this->query['body']['filter']['bool'][$mode][] = $query;
+
         return $this;
     }
 

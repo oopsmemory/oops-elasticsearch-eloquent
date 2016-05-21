@@ -1,17 +1,20 @@
-<?php namespace Isswp101\Persimmon\QueryBuilder;
+<?php
 
-use Illuminate\Support\Collection;
+namespace Isswp101\Persimmon\QueryBuilder\Filters;
 
-abstract class Filter {
-
+abstract class Filter
+{
     const MODE_INCLUDE = 'include';
     const MODE_EXCLUDE = 'exclude';
     const MODE_OFF = 'off';
 
+    const MERGE_AND = 'AND';
+    const MERGE_OR = 'OR';
+
     /**
      * Filter mode.
      *
-     * @var string Can be as 'include', 'exclude', 'off'.
+     * @var string Can be as include, exclude or off.
      */
     protected $mode;
 
@@ -35,7 +38,7 @@ abstract class Filter {
      *
      * @var string
      */
-    protected $mergeType = 'AND';
+    protected $mergeType = Filter::MERGE_AND;
 
     /**
      * Linked filters are merged using AND (must) by default.
@@ -43,19 +46,16 @@ abstract class Filter {
      *
      * @var string
      */
-    protected $logicalOperator = 'OR';
+    protected $logicalOperator = Filter::MERGE_OR;
 
     /**
      * Constructor.
      *
      * @param mixed $values Filter values.
-     * @param string $mode Filter mode.
-     * @param string $logicalOperator Linked filters will be interconnected via "OR" || "AND".
-     * @param array $linkedFilters
      */
-    public function __construct($values = null, $mode = self::MODE_INCLUDE, $logicalOperator = 'OR', array $linkedFilters = []) {
+    public function __construct($values = null)
+    {
         $this->values = $values;
-        $this->setOptions($mode, $logicalOperator, $linkedFilters);
     }
 
     /**
@@ -66,9 +66,10 @@ abstract class Filter {
      * @param array $linkedFilters
      * @return $this
      */
-    public function setOptions($mode = null, $logicalOperator = null, array $linkedFilters = []) {
-        $this->mode = is_null($mode) ? self::MODE_INCLUDE : $mode;
-        $this->logicalOperator = is_null($logicalOperator) ? 'OR' : $logicalOperator;
+    public function setOptions($mode = null, $logicalOperator = null, array $linkedFilters = [])
+    {
+        $this->mode = is_null($mode) ? Filter::MODE_INCLUDE : $mode;
+        $this->logicalOperator = is_null($logicalOperator) ? Filter::MERGE_OR : $logicalOperator;
         $this->linkedFilters = $linkedFilters;
         return $this;
     }
@@ -97,16 +98,17 @@ abstract class Filter {
      *
      * @return array
      */
-    public function makeQuery() {
+    public function makeQuery()
+    {
         $query = $this->query($this->getValues());
 
         $map = [
-            'AND' => 'must',
-            'OR' => 'should'
+            Filter::MERGE_AND => 'must',
+            Filter::MERGE_OR => 'should'
         ];
 
         if ($this->isInclude()) {
-            if ($this->getLogicalOperator() == 'AND') {
+            if ($this->getLogicalOperator() == Filter::MERGE_AND) {
                 $query = [
                     'bool' => [
                         'must' => [
@@ -114,8 +116,7 @@ abstract class Filter {
                         ]
                     ]
                 ];
-            }
-            elseif ($this->getLogicalOperator() == 'OR') {
+            } elseif ($this->getLogicalOperator() == Filter::MERGE_OR) {
                 $query = [
                     'bool' => [
                         'should' => [
@@ -124,8 +125,7 @@ abstract class Filter {
                     ]
                 ];
             }
-        }
-        elseif ($this->isExclude()) {
+        } elseif ($this->isExclude()) {
             $mergeOperator = $map[$this->getLogicalOperator()];
             $query = [
                 'bool' => [
@@ -140,22 +140,19 @@ abstract class Filter {
                     ]
                 ]
             ];
-        }
-        elseif ($this->isOff()) {
+        } elseif ($this->isOff()) {
             $query = [];
         }
 
         foreach ($this->getLinkedFilters() as $filter) {
-            /** @var Filter $filter */
             $extraQuery = $filter->makeQuery();
 
 //            if ($filter->isInclude()) {
-                if ($this->getLogicalOperator() == 'AND') {
-                    $query = $this->mergeBoolQuery($query, $extraQuery, 'must');
-                }
-                elseif ($this->getLogicalOperator() == 'OR') {
-                    $query = $this->mergeBoolQuery($query, $extraQuery, 'should');
-                }
+            if ($this->getLogicalOperator() == Filter::MERGE_AND) {
+                $query = $this->mergeBoolQuery($query, $extraQuery, 'must');
+            } elseif ($this->getLogicalOperator() == Filter::MERGE_OR) {
+                $query = $this->mergeBoolQuery($query, $extraQuery, 'should');
+            }
 //            }
 //            elseif ($filter->isExclude()) {
 //                $query = $this->mergeBoolQuery($query, $extraQuery, 'must_not');
@@ -171,11 +168,13 @@ abstract class Filter {
      * @param array $query Elastcisearch query.
      * @return array Merged elasticsearch query.
      */
-    public function mergeQuery(array $query) {
+    public function mergeQuery(array $query)
+    {
         $types = [
-            'AND' => 'must',
-            'OR' => 'should'
+            Filter::MERGE_AND => 'must',
+            Filter::MERGE_OR => 'should'
         ];
+
         $type = $this->getMergeType();
 
         $query['body']['filter']['bool'][$types[$type]][] = $this->makeQuery();
@@ -186,46 +185,41 @@ abstract class Filter {
     /**
      * Returns filter mode.
      *
-     * @return string Can be as 'include', 'exclude', 'off'.
+     * @return string Can be as include, exclude or off.
      */
-    public function getMode() {
+    public function getMode()
+    {
         return $this->mode;
     }
 
     /**
-     * Returns true if mode is 'include'.
+     * Returns true if mode is include.
      *
      * @return bool
      */
-    public function isInclude() {
-        return $this->getMode() == self::MODE_INCLUDE;
+    public function isInclude()
+    {
+        return $this->getMode() == Filter::MODE_INCLUDE;
     }
 
     /**
-     * Returns true if mode is 'exclude'.
+     * Returns true if mode is exclude.
      *
      * @return bool
      */
-    public function isExclude() {
-        return $this->getMode() == self::MODE_EXCLUDE;
+    public function isExclude()
+    {
+        return $this->getMode() == Filter::MODE_EXCLUDE;
     }
 
     /**
-     * Returns true if mode is 'off'.
+     * Returns true if mode is off.
      *
      * @return bool
      */
-    public function isOff() {
-        return $this->getMode() == self::MODE_OFF;
-    }
-
-    /**
-     * Retuns filter values as collection.
-     *
-     * @return Collection
-     */
-    public function getValuesAsCollection() {
-        return new Collection($this->values);
+    public function isOff()
+    {
+        return $this->getMode() == Filter::MODE_OFF;
     }
 
     /**
@@ -233,16 +227,18 @@ abstract class Filter {
      *
      * @return mixed
      */
-    public function getValues() {
+    public function getValues()
+    {
         return $this->values;
     }
 
     /**
      * Returns linked instances of current filter.
      *
-     * @return array
+     * @return Filter[]
      */
-    public function getLinkedFilters() {
+    public function getLinkedFilters()
+    {
         return $this->linkedFilters;
     }
 
@@ -251,7 +247,8 @@ abstract class Filter {
      *
      * @return bool
      */
-    public function hasLinkedFilters() {
+    public function hasLinkedFilters()
+    {
         return !empty($this->linkedFilters);
     }
 
@@ -260,7 +257,8 @@ abstract class Filter {
      *
      * @return string - "AND" || "OR"
      */
-    public function getMergeType() {
+    public function getMergeType()
+    {
         return $this->mergeType;
     }
 
@@ -269,7 +267,8 @@ abstract class Filter {
      *
      * @param string $mergeType - "AND" || "OR"
      */
-    public function setMergeType($mergeType) {
+    public function setMergeType($mergeType)
+    {
         $this->mergeType = $mergeType;
     }
 
@@ -278,7 +277,8 @@ abstract class Filter {
      *
      * @return string - "AND" || "OR"
      */
-    public function getLogicalOperator() {
+    public function getLogicalOperator()
+    {
         return $this->logicalOperator;
     }
 
@@ -287,7 +287,8 @@ abstract class Filter {
      *
      * @param string $logicalOperator - "AND" || "OR"
      */
-    public function setLogicalOperator($logicalOperator) {
+    public function setLogicalOperator($logicalOperator)
+    {
         $this->logicalOperator = $logicalOperator;
     }
 
@@ -295,8 +296,9 @@ abstract class Filter {
      * Returns true if merge type is valid.
      * @return bool
      */
-    public function isMergeTypeValid() {
-        return in_array($this->mergeType, ['AND', 'OR']);
+    public function isMergeTypeValid()
+    {
+        return in_array($this->mergeType, [Filter::MERGE_AND, Filter::MERGE_OR]);
     }
 
     /**
@@ -304,14 +306,14 @@ abstract class Filter {
      *
      * @param array $query1
      * @param array $query2
-     * @param string $type - must, must_not, should
+     * @param string $type must, must_not, should
      * @return array
      */
-    protected function mergeBoolQuery(array $query1, array $query2, $type) {
+    protected function mergeBoolQuery(array $query1, array $query2, $type)
+    {
         if (empty($query2['bool'][$type])) {
             return $query1;
-        }
-        else {
+        } else {
             if (empty($query1['bool'][$type])) {
                 $query1['bool'][$type] = [];
             }
@@ -321,5 +323,4 @@ abstract class Filter {
 
         return $query1;
     }
-
 }
