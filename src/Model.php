@@ -14,6 +14,7 @@ use Isswp101\Persimmon\Traits\Containerable;
 use Isswp101\Persimmon\Traits\Eventable;
 use Isswp101\Persimmon\Traits\Fillable;
 use Isswp101\Persimmon\Traits\Idable;
+use Isswp101\Persimmon\Traits\Logable;
 use Isswp101\Persimmon\Traits\Mergeable;
 use Isswp101\Persimmon\Traits\Presentable;
 use Isswp101\Persimmon\Traits\Timestampable;
@@ -26,6 +27,7 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
     use Idable, Userable, Timestampable;
     use Fillable, Cacheable, Containerable;
     use Presentable, Eventable, Mergeable;
+    use Logable;
 
     /**
      * @var IDAL
@@ -131,9 +133,9 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
     }
 
     /**
-     * @return Model
+     * @return static
      */
-    final protected static function createInstance()
+    final public static function createInstance()
     {
         return new static();
     }

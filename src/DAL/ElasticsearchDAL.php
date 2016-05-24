@@ -3,6 +3,7 @@
 namespace Isswp101\Persimmon\DAL;
 
 use Elasticsearch\Client;
+use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\ElasticsearchModel;
 
 class ElasticsearchDAL implements IDAL
@@ -35,16 +36,12 @@ class ElasticsearchDAL implements IDAL
 
         $response = $this->client->get($params);
 
-        return $this->model->fillFromResponse($response);
+        return $this->model->fillByResponse($response);
     }
 
     public function put(array $columns = ['*'])
     {
-        $params = $this->model->getPath()->toArray();
-
-        if ($this->model->getParentId()) {
-            $params['parent'] = $this->model->getParentId();
-        }
+        $params = $this->getParams();
 
         if (!$this->model->_exist || $columns == ['*']) {
             if (!$params['id']) {
@@ -69,12 +66,58 @@ class ElasticsearchDAL implements IDAL
 
     public function delete()
     {
+        return $this->client->delete($this->getParams());
+    }
+
+    protected function getParams()
+    {
         $params = $this->model->getPath()->toArray();
 
         if ($this->model->getParentId()) {
             $params['parent'] = $this->model->getParentId();
         }
 
-        return $this->client->delete($params);
+        return $params;
+    }
+
+    public function search(array $query)
+    {
+        if (empty($query['body']['query']) && empty($query['body']['filter'])) {
+            $query['body']['query'] = [
+                'match_all' => []
+            ];
+        }
+
+        $params = [
+            'index' => $this->model->getIndex(),
+            'type' => $this->model->getType(),
+            'from' => array_get($query, 'from', 0),
+            'size' => array_get($query, 'size', 50),
+            'body' => $query['body']
+        ];
+
+        // @TODO: use own logger, not model logger
+        if ($this->model->hasLogger()) {
+            $this->model->getLogger()->debug('Query', $params);
+        }
+
+        $collection = new ElasticsearchCollection();
+
+        $response = $this->client->search($params);
+
+        $collection->response($response);
+
+        $from = $params['from'];
+        foreach ($response['hits']['hits'] as $hit) {
+            $model = $this->model->createInstance();
+            $model->_score = $hit['_score'];
+            $model->_position = $from++;
+            $model->_exist = true;
+            $model->fillByResponse($hit);
+            $model->fillByInnerHits($hit);
+            $collection->put($model->getId(), $model);
+        }
+
+        return $collection;
     }
 }
