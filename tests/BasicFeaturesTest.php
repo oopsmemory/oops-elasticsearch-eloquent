@@ -288,4 +288,44 @@ class BasicFeaturesTest extends TestCase
         $this->assertEquals(3, $product->getPrevious()->getId());
         $this->assertEquals(2, $product->getNext()->getId());
     }
+
+    public function testFindOrNew()
+    {
+        $product = Product::findOrNew(10);
+
+        // product wasn't save
+        $this->assertFalse($product->_exist);
+
+        $this->assertEquals(10, $product->getId());
+        $this->assertEmpty($product->name);
+        $this->assertEquals('0', $product->price);
+        $this->assertInstanceOf(Model::class, $product);
+        $this->assertInstanceOf(ElasticsearchModel::class, $product);
+    }
+
+    public function testDelete()
+    {
+        Product::create(['id' => 6, 'name' => 'Product 6', 'price' => 66]);
+
+        $product = Product::find(6);
+        $this->assertNotNull($product);
+
+        $product->delete();
+        $product = Product::find(6);
+
+        $this->assertNull($product);
+    }
+
+    public function testDestroy()
+    {
+        Product::create(['id' => 5, 'name' => 'Product 5', 'price' => 55]);
+
+        $product = Product::find(5);
+        $this->assertNotNull($product);
+
+        Product::destroy(5);
+        $product = Product::find(5);
+
+        $this->assertNull($product);
+    }
 }
