@@ -10,7 +10,6 @@ use Isswp101\Persimmon\Contracts\Jsonable;
 use Isswp101\Persimmon\Contracts\Stringable;
 use Isswp101\Persimmon\DAL\IDAL;
 use Isswp101\Persimmon\Traits\Cacheable;
-use Isswp101\Persimmon\Traits\Containerable;
 use Isswp101\Persimmon\Traits\Eventable;
 use Isswp101\Persimmon\Traits\Fillable;
 use Isswp101\Persimmon\Traits\Idable;
@@ -25,9 +24,8 @@ use ReflectionClass;
 abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializable
 {
     use Idable, Userable, Timestampable;
-    use Fillable, Cacheable, Containerable;
+    use Fillable, Cacheable, Logable;
     use Presentable, Eventable, Mergeable;
-    use Logable;
 
     /**
      * @var IDAL
@@ -47,8 +45,6 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
     public function __construct(array $attributes = [])
     {
         $this->injectDependencies();
-
-        $this->injectContainer();
 
         $this->fill($attributes);
     }
