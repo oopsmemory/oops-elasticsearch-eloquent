@@ -27,6 +27,8 @@ class BasicFeaturesTest extends BaseTestCase
         } catch (Missing404Exception $e) {
         }
 
+        sleep(2);
+
         $this->es->indices()->create(['index' => $index]);
 
         $query = ['index' => $index, 'type' => $type, 'body' => ['query' => ['match_all' => []]]];
