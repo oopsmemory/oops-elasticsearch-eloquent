@@ -16,6 +16,11 @@ class InnerHits
         return array_get($this->hits, 'inner_hits.' . $parentType . '.hits.hits.0._id');
     }
 
+    public function getParent($parentType)
+    {
+        return array_get($this->hits, 'inner_hits.' . $parentType . '.hits.hits.0');
+    }
+
     public function get()
     {
         return $this->hits;
