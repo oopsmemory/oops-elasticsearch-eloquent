@@ -11,6 +11,7 @@ use Isswp101\Persimmon\ElasticsearchModel;
 use Isswp101\Persimmon\Model;
 use Isswp101\Persimmon\QueryBuilder\Aggregations\TermsAggregation;
 use Isswp101\Persimmon\QueryBuilder\Filters\IdsFilter;
+use Isswp101\Persimmon\QueryBuilder\Filters\RangeOrExistFilter;
 use Isswp101\Persimmon\QueryBuilder\Filters\TermFilter;
 use Isswp101\Persimmon\QueryBuilder\QueryBuilder;
 use Isswp101\Persimmon\Test\Models\Product;
@@ -294,7 +295,6 @@ class BasicFeaturesTest extends BaseTestCase
         $this->assertEquals(2, $product->getNext()->getId());
     }
 
-    /** @group failing */
     public function testIdsFilter()
     {
         $query = new QueryBuilder();
@@ -304,5 +304,19 @@ class BasicFeaturesTest extends BaseTestCase
         $this->assertEquals(2, $products->count());
         $this->assertEquals(1, $products->first()->getId());
         $this->assertEquals(3, $products->last()->getId());
+    }
+
+    /** @group failing */
+    public function testRangeOrExistFilter()
+    {
+        $query = new QueryBuilder();
+        $query->filter(new RangeOrExistFilter('price', ['gte' => 20]));
+        $products = Product::search($query);
+        $this->assertEquals(2, $products->count());
+
+        $query = new QueryBuilder();
+        $query->filter(new RangeOrExistFilter('price'));
+        $products = Product::search($query);
+        $this->assertEquals(3, $products->count());
     }
 }
