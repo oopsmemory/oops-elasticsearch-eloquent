@@ -3,8 +3,7 @@
 namespace Isswp101\Persimmon\Test;
 
 use Carbon\Carbon;
-use Dotenv\Dotenv;
-use Elasticsearch\Client;
+use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Isswp101\Persimmon\Collection\ElasticsearchCollection;
@@ -14,66 +13,29 @@ use Isswp101\Persimmon\QueryBuilder\Aggregations\TermsAggregation;
 use Isswp101\Persimmon\QueryBuilder\Filters\TermFilter;
 use Isswp101\Persimmon\QueryBuilder\QueryBuilder;
 use Isswp101\Persimmon\Test\Models\Product;
-use Monolog\Logger;
-use Orchestra\Testbench\TestCase;
 
-class BasicFeaturesTest extends TestCase
+class BasicFeaturesTest extends BaseTestCase
 {
-    /**
-     * @var Client
-     */
-    protected $es;
-
-    /**
-     * Setup the test environment.
-     */
     public function setUp()
     {
         parent::setUp();
-
-        $this->loadDotenv();
-
-        $this->es = app(Client::class);
     }
 
-    /**
-     * Load Dotenv.
-     */
-    protected function loadDotenv()
+    protected function prepareIndex()
     {
-        $dotenv = new Dotenv(__DIR__);
-        $dotenv->load();
-    }
+        $index = Product::getIndex();
 
-    /**
-     * Define environment setup.
-     *
-     * @param \Illuminate\Foundation\Application $app
-     * @return void
-     */
-    protected function getEnvironmentSetUp($app)
-    {
-        $app->singleton(Client::class, function () {
-            $params = [
-                'hosts' => [
-                    env('ELASTICSEARCH_HOSTS', '')
-                ],
-                'logPath' => 'app/storage/logs',
-                'logLevel' => Logger::INFO,
-                'connectionParams' => [
-                    'auth' => [
-                        env('ELASTICSEARCH_AUTH_USER', ''),
-                        env('ELASTICSEARCH_AUTH_PASS', ''),
-                        'Basic'
-                    ]
-                ]
-            ];
-            return new Client($params);
-        });
+        try {
+            $this->es->indices()->delete(['index' => $index]);
+        } catch (Missing404Exception $e) {
+        }
+
+        $this->es->indices()->create(['index' => $index]);
     }
 
     public function testFill()
     {
+        $this->prepareIndex();
         $p1 = new Product();
         $p1->id = 1;
         $p1->name = 'name';
