@@ -3,6 +3,7 @@
 namespace Isswp101\Persimmon\Test;
 
 use Carbon\Carbon;
+use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Isswp101\Persimmon\Collection\ElasticsearchCollection;
@@ -20,8 +21,21 @@ class BasicFeaturesTest extends BaseTestCase
         parent::setUp();
     }
 
+    protected function prepareIndex()
+    {
+        $index = Product::getIndex();
+
+        try {
+            $this->es->indices()->delete(['index' => $index]);
+        } catch (Missing404Exception $e) {
+        }
+
+        $this->es->indices()->create(['index' => $index]);
+    }
+
     public function testFill()
     {
+        $this->prepareIndex();
         $p1 = new Product();
         $p1->id = 1;
         $p1->name = 'name';
