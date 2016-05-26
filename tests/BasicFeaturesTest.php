@@ -10,6 +10,7 @@ use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\ElasticsearchModel;
 use Isswp101\Persimmon\Model;
 use Isswp101\Persimmon\QueryBuilder\Aggregations\TermsAggregation;
+use Isswp101\Persimmon\QueryBuilder\Filters\IdsFilter;
 use Isswp101\Persimmon\QueryBuilder\Filters\TermFilter;
 use Isswp101\Persimmon\QueryBuilder\QueryBuilder;
 use Isswp101\Persimmon\Test\Models\Product;
@@ -235,7 +236,6 @@ class BasicFeaturesTest extends BaseTestCase
         $this->assertInstanceOf(Carbon::class, $product->getUpdatedAt());
     }
 
-    /** @group failing */
     public function testBasicFilters()
     {
         Product::create(['id' => 1, 'name' => 'Product 1', 'price' => 10]);
@@ -290,5 +290,17 @@ class BasicFeaturesTest extends BaseTestCase
         $product->makePagination();
         $this->assertEquals(3, $product->getPrevious()->getId());
         $this->assertEquals(2, $product->getNext()->getId());
+    }
+
+    /** @group failing */
+    public function testIdsFilter()
+    {
+        $query = new QueryBuilder();
+        $query->filter(new IdsFilter([1, 3]));
+        $products = Product::search($query);
+
+        $this->assertEquals(2, $products->count());
+        $this->assertEquals(1, $products->first()->getId());
+        $this->assertEquals(3, $products->last()->getId());
     }
 }
