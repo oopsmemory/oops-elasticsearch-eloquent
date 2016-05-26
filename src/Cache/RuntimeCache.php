@@ -98,4 +98,16 @@ class RuntimeCache
         $cached_attributes = $this->cache[$key]['attributes'];
         return $cached_attributes == ['*'] ? [] : array_diff($attributes, $cached_attributes);
     }
+
+    /**
+     * Remove an item from the cache by key.
+     *
+     * @param mixed $key
+     * @return $this
+     */
+    public function forget($key)
+    {
+        unset($this->cache[$key]);
+        return $this;
+    }
 }
