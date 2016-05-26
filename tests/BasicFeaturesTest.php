@@ -16,14 +16,10 @@ use Isswp101\Persimmon\Test\Models\Product;
 
 class BasicFeaturesTest extends BaseTestCase
 {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-
-    protected function prepareIndex()
+    public function testPrepareIndex()
     {
         $index = Product::getIndex();
+        $type = Product::getType();
 
         try {
             $this->es->indices()->delete(['index' => $index]);
@@ -31,11 +27,14 @@ class BasicFeaturesTest extends BaseTestCase
         }
 
         $this->es->indices()->create(['index' => $index]);
+
+        $query = ['index' => $index, 'type' => $type, 'body' => ['query' => ['match_all' => []]]];
+        $res = $this->es->search($query);
+        $this->assertEquals(0, $res['hits']['total']);
     }
 
     public function testFill()
     {
-        $this->prepareIndex();
         $p1 = new Product();
         $p1->id = 1;
         $p1->name = 'name';
@@ -116,6 +115,49 @@ class BasicFeaturesTest extends BaseTestCase
         Product::findOrFail(2);
     }
 
+    public function testFindOrNew()
+    {
+        $product = Product::findOrNew(10);
+        $this->assertFalse($product->_exist);
+        $this->assertEquals(10, $product->getId());
+        $this->assertEmpty($product->name);
+        $this->assertEquals(0, $product->price);
+        $this->assertInstanceOf(Model::class, $product);
+        $this->assertInstanceOf(ElasticsearchModel::class, $product);
+
+        $this->expectException(Missing404Exception::class);
+        $this->es->get($product->getPath()->toArray());
+    }
+
+    public function testDelete()
+    {
+        Product::create(['id' => 6, 'name' => 'Product 6', 'price' => 66]);
+        $product = Product::find(6);
+        $this->assertNotNull($product);
+        $product->delete();
+
+        $this->expectException(Missing404Exception::class);
+        $this->es->get($product->getPath()->toArray());
+
+        $product = Product::find(6);
+        $this->assertNull($product);
+    }
+
+    public function testDestroy()
+    {
+        Product::create(['id' => 5, 'name' => 'Product 5', 'price' => 55]);
+        $product = Product::find(5);
+        $this->assertNotNull($product);
+
+        Product::destroy(5);
+
+        $this->expectException(Missing404Exception::class);
+        $this->es->get($product->getPath()->toArray());
+
+        $product = Product::find(5);
+        $this->assertNull($product);
+    }
+
     public function testPartialUpdate()
     {
         $product = Product::find(1, ['name']);
@@ -193,11 +235,13 @@ class BasicFeaturesTest extends BaseTestCase
         $this->assertInstanceOf(Carbon::class, $product->getUpdatedAt());
     }
 
+    /** @group failing */
     public function testBasicFilters()
     {
         Product::create(['id' => 1, 'name' => 'Product 1', 'price' => 10]);
         Product::create(['id' => 2, 'name' => 'Product 2', 'price' => 20]);
         Product::create(['id' => 3, 'name' => 'Product 3', 'price' => 30]);
+        sleep(1);
 
         $query = new QueryBuilder();
         $query->match('name', 'Product');
@@ -239,9 +283,6 @@ class BasicFeaturesTest extends BaseTestCase
         $this->assertEquals(3, $buckets[0]->getCount());
     }
 
-    /**
-     * @group failing
-     */
     public function testPagination()
     {
         $product = Product::find(1);
