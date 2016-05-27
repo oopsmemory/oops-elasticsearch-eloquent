@@ -8,16 +8,24 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\ElasticsearchModel;
+use Isswp101\Persimmon\Exceptions\InvalidModelEndpointException;
 use Isswp101\Persimmon\Model;
 use Isswp101\Persimmon\QueryBuilder\Aggregations\TermsAggregation;
 use Isswp101\Persimmon\QueryBuilder\Filters\IdsFilter;
 use Isswp101\Persimmon\QueryBuilder\Filters\RangeOrExistFilter;
 use Isswp101\Persimmon\QueryBuilder\Filters\TermFilter;
 use Isswp101\Persimmon\QueryBuilder\QueryBuilder;
+use Isswp101\Persimmon\Test\Models\InvalidModel;
 use Isswp101\Persimmon\Test\Models\Product;
 
 class BasicFeaturesTest extends BaseTestCase
 {
+    public function testValidateModel()
+    {
+        $this->expectException(InvalidModelEndpointException::class);
+        new InvalidModel();
+    }
+
     public function testPrepareIndex()
     {
         $index = Product::getIndex();

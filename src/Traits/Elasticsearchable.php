@@ -2,10 +2,10 @@
 
 namespace Isswp101\Persimmon\Traits;
 
-use Exception;
 use Isswp101\Persimmon\Elasticsearch\DocumentPath;
 use Isswp101\Persimmon\Elasticsearch\InnerHits;
 use Isswp101\Persimmon\Elasticsearch\Response;
+use Isswp101\Persimmon\Exceptions\InvalidModelEndpointException;
 
 trait Elasticsearchable
 {
@@ -64,16 +64,20 @@ trait Elasticsearchable
     }
 
     /**
-     * @throws \Exception
+     * @throws InvalidModelEndpointException
      */
-    final protected function validateIndexAndType()
+    final protected function validateModelEndpoint()
     {
         if (!$this->getIndex()) {
-            throw new Exception(sprintf('Please specify the index for your Elasticsearch model %s', static::class));
+            throw new InvalidModelEndpointException(sprintf(
+                'Please specify the index for your Elasticsearch model %s', static::class
+            ));
         }
 
         if (!$this->getType()) {
-            throw new Exception(sprintf('Please specify the type for your Elasticsearch model %s', static::class));
+            throw new InvalidModelEndpointException(sprintf(
+                'Please specify the type for your Elasticsearch model %s', static::class
+            ));
         }
     }
 

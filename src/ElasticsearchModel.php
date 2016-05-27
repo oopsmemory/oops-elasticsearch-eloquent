@@ -24,7 +24,7 @@ class ElasticsearchModel extends Model
 
     public function __construct(array $attributes = [])
     {
-        $this->validateIndexAndType();
+        $this->validateModelEndpoint();
 
         parent::__construct($attributes);
     }
