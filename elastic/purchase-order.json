@@ -1,0 +1,13 @@
+{
+  "mappings": {
+    "orders": {
+      "properties": {
+      }
+      }
+    },
+    "lines": {
+      "_parent": {
+        "type": "orders"
+      }
+    }
+}

@@ -12,6 +12,8 @@ use Isswp101\Persimmon\Traits\Elasticsearchable;
 use Isswp101\Persimmon\Traits\Paginationable;
 use Isswp101\Persimmon\Traits\Relationshipable;
 use ReflectionClass;
+use Isswp101\Persimmon\Relationship\BelongsToRelationship;
+use Isswp101\Persimmon\Relationship\HasManyRelationship;
 
 class ElasticsearchModel extends Model
 {
@@ -150,5 +152,13 @@ class ElasticsearchModel extends Model
             $collection->put($document->getId(), $document);
         });
         return $collection;
+    }
+
+    protected function belongsTo($class) {
+        return new BelongsToRelationship($this, $class);
+    }
+
+    protected function hasMany($class) {
+        return new HasManyRelationship($this, $class);
     }
 }
