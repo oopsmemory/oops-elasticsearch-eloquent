@@ -7,8 +7,9 @@ use Isswp101\Persimmon\Test\Models\PurchaseOrderLine;
 
 class PurchaseOrder extends ElasticsearchModel
 {
-    protected static $index = 'testRelationshipPO';
-    protected static $type = 'testRelationshipPO';
+    //protected static $index = '../../elastic/purchase-order.json';
+    protected static $index = 'testrelationshippo';
+    protected static $type = 'testrelationshippo';
 
     public $name;
     

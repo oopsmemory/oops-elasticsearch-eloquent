@@ -2,7 +2,7 @@
   "mappings": {
     "orders": {
       "properties": {
-      }
+        }
       }
     },
     "lines": {
