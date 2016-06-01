@@ -7,12 +7,11 @@ use Isswp101\Persimmon\Test\Models\PurchaseOrderLine;
 
 class PurchaseOrder extends ElasticsearchModel
 {
-    //protected static $index = '../../elastic/purchase-order.json';
-    protected static $index = 'testrelationshippo';
-    protected static $type = 'testrelationshippo';
+    protected static $index = 'orders';
+    protected static $type = 'orders';
 
     public $name;
-    
+
     public function line()
     {
         return $this->hasMany(PurchaseOrderLine::class);

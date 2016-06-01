@@ -7,11 +7,12 @@ use Isswp101\Persimmon\Test\Models\PurchaseOrder;
 
 class PurchaseOrderLine extends ElasticsearchModel
 {
-    protected static $index = 'testrelationshippoline';
-    protected static $type = 'testrelationshippoline';
+    protected static $index = 'lines';
+    protected static $type = 'lines';
 
     public $name;
-
+    public $parent;
+    
     public function po()
     {
         return $this->belongsTo(PurchaseOrder::class);
