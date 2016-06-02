@@ -3,16 +3,15 @@
 namespace Isswp101\Persimmon\Test\Models;
 
 use Isswp101\Persimmon\ElasticsearchModel;
-use Isswp101\Persimmon\Test\Models\PurchaseOrderLine;
 
 class PurchaseOrder extends ElasticsearchModel
 {
-    protected static $index = 'orders';
+    protected static $index = 'test_parent_child_rel';
     protected static $type = 'orders';
 
     public $name;
 
-    public function line()
+    public function lines()
     {
         return $this->hasMany(PurchaseOrderLine::class);
     }

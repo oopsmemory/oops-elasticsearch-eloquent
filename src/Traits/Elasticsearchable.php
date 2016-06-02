@@ -92,7 +92,7 @@ trait Elasticsearchable
     /**
      * @return InnerHits
      */
-    protected function getInnerHits()
+    public function getInnerHits()
     {
         return $this->_innerHits;
     }
@@ -123,7 +123,7 @@ trait Elasticsearchable
 
     public function getPath()
     {
-        return new DocumentPath($this->getIndex(), $this->getType(), $this->getId());
+        return new DocumentPath($this->getIndex(), $this->getType(), $this->getId(), $this->getParentId());
     }
 
     public function getPosition()

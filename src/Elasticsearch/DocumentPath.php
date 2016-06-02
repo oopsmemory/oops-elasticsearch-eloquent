@@ -11,12 +11,14 @@ class DocumentPath
     public $index;
     public $type;
     public $id;
+    public $parent;
 
-    public function __construct($index, $type, $id)
+    public function __construct($index, $type, $id, $parent = null)
     {
         $this->index = $index;
         $this->type = $type;
         $this->id = $id;
+        $this->parent = $parent;
     }
 
     public function getIndex()
@@ -32,6 +34,11 @@ class DocumentPath
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getParent()
+    {
+        return $this->parent;
     }
 
     public function getPath()
