@@ -18,7 +18,7 @@ class HasManyRelationship
      */
     protected $childClassName;
 
-    function __construct(ElasticsearchModel $parent, $childClassName)
+    public function __construct(ElasticsearchModel $parent, $childClassName)
     {
         $this->parent = $parent;
         $this->childClassName = $childClassName;

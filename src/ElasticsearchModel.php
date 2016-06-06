@@ -39,8 +39,7 @@ class ElasticsearchModel extends Model
 
     public static function findWithParentId($id, $parent, array $columns = ['*'])
     {
-        /** @var static $model */
-        $model = parent::find($id, $columns, ['parent' => $parent]);
+        $model = static::find($id, $columns, ['parent' => $parent]);
 
         if ($model) {
             $model->setParentId($parent);
