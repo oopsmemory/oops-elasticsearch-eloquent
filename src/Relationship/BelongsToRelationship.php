@@ -2,9 +2,8 @@
 
 namespace Isswp101\Persimmon\Relationship;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Isswp101\Persimmon\ElasticsearchModel;
-use ReflectionClass;
+use Isswp101\Persimmon\Exceptions\ParentModelNotFoundException;
 
 class BelongsToRelationship
 {
@@ -24,6 +23,11 @@ class BelongsToRelationship
         $this->parentClass = $parentClass;
     }
 
+    /**
+     * Associate parent document.
+     * 
+     * @param ElasticsearchModel $parent
+     */
     public function associate(ElasticsearchModel $parent)
     {
         $this->child->setParent($parent);
@@ -32,7 +36,7 @@ class BelongsToRelationship
     /**
      * Return parent model.
      *
-     * @return ElasticsearchModel
+     * @return ElasticsearchModel|null
      */
     public function get()
     {
@@ -55,22 +59,15 @@ class BelongsToRelationship
             $parent = $parentClass::find($parentId);
         }
 
-        if (!$parent) {
-            $reflection = new ReflectionClass($parentClass);
-            throw new ModelNotFoundException(sprintf(
-                'Model `%s` not found by id `%s`. Try to set parent id in your model or use inner_hits statement.',
-                $reflection->getShortName(), $parentId
-            ));
-        }
-
         $this->child->setParent($parent);
 
         return $parent;
     }
 
     /**
-     * Return parent instance via inner_hits objects.
+     * Return parent model.
      *
+     * @throws ParentModelNotFoundException
      * @return ElasticsearchModel
      */
     public function getOrFail()
@@ -78,7 +75,7 @@ class BelongsToRelationship
         $model = $this->get();
 
         if (is_null($model)) {
-            throw new ModelNotFoundException();
+            throw new ParentModelNotFoundException($this->parentClass, $this->child->getParentId());
         }
 
         return $model;

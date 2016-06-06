@@ -3,17 +3,16 @@
 namespace Isswp101\Persimmon;
 
 use Elasticsearch\Client;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\DAL\ElasticsearchDAL;
+use Isswp101\Persimmon\Exceptions\ModelNotFoundException;
 use Isswp101\Persimmon\QueryBuilder\QueryBuilder;
+use Isswp101\Persimmon\Relationship\BelongsToRelationship;
+use Isswp101\Persimmon\Relationship\HasManyRelationship;
 use Isswp101\Persimmon\Traits\Elasticsearchable;
 use Isswp101\Persimmon\Traits\Paginationable;
 use Isswp101\Persimmon\Traits\Relationshipable;
-use ReflectionClass;
-use Isswp101\Persimmon\Relationship\BelongsToRelationship;
-use Isswp101\Persimmon\Relationship\HasManyRelationship;
 
 class ElasticsearchModel extends Model
 {
@@ -85,15 +84,14 @@ class ElasticsearchModel extends Model
      * Execute the query and get the first result or throw an exception.
      *
      * @param QueryBuilder|array $query
-     * @return static
      * @throws ModelNotFoundException
+     * @return static
      */
     public static function firstOrFail($query = [])
     {
         $model = static::first($query);
         if (is_null($model)) {
-            $reflect = new ReflectionClass(get_called_class());
-            throw new ModelNotFoundException(sprintf('Model `%s` not found', $reflect->getShortName()));
+            throw new ModelNotFoundException(get_called_class());
         }
         return $model;
     }
