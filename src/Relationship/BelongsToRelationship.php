@@ -2,9 +2,8 @@
 
 namespace Isswp101\Persimmon\Relationship;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Isswp101\Persimmon\ElasticsearchModel;
-use ReflectionClass;
+use Isswp101\Persimmon\Exceptions\ParentModelNotFoundException;
 
 class BelongsToRelationship
 {
@@ -16,55 +15,59 @@ class BelongsToRelationship
     /**
      * @var ElasticsearchModel
      */
-    protected $parentClassName;
+    protected $parentClass;
 
-    function __construct(ElasticsearchModel $child, $parentClassName)
+    public function __construct(ElasticsearchModel $child, $parentClass)
     {
         $this->child = $child;
-        $this->parentClassName = $parentClassName;
+        $this->parentClass = $parentClass;
     }
 
-    public function associate($parent)
+    /**
+     * Associate parent document.
+     * 
+     * @param ElasticsearchModel $parent
+     */
+    public function associate(ElasticsearchModel $parent)
     {
         $this->child->setParent($parent);
     }
 
     /**
-     * Return parent instance via inner_hits objects.
+     * Return parent model.
      *
-     * @return ElasticsearchModel
+     * @return ElasticsearchModel|null
      */
     public function get()
     {
         $parent = $this->child->getParent();
 
-        if (!$parent) {
-            $parentClassName = $this->parentClassName;
-            $innerHit = $this->child->getInnerHits()->getParent($parentClassName::getType());
-
-            if ($innerHit) {
-                $parent = new $parentClassName($innerHit);
-            } elseif ($this->child->getParentId()) {
-                $parent = $parentClassName::find($this->child->getParentId());
-            }
-
-            if (!$parent) {
-                $reflect = new ReflectionClass($parentClassName);
-                throw new ModelNotFoundException(sprintf(
-                    'Model `%s` not found by id `%s`. Try to use inner_hits.',
-                    $reflect->getShortName(), $this->child->getParentId()
-                ));
-            } else {
-                $this->child->setParent($parent);
-            }
+        if ($parent) {
+            return $parent;
         }
+
+        $parentClass = $this->parentClass;
+
+        $parentId = $this->child->getParentId();
+
+        $innerHits = $this->child->getInnerHits();
+
+        if ($innerHits) {
+            $attributes = $innerHits->getParent($parentClass::getType());
+            $parent = new $parentClass($attributes);
+        } elseif ($parentId) {
+            $parent = $parentClass::find($parentId);
+        }
+
+        $this->child->setParent($parent);
 
         return $parent;
     }
 
     /**
-     * Return parent instance via inner_hits objects.
+     * Return parent model.
      *
+     * @throws ParentModelNotFoundException
      * @return ElasticsearchModel
      */
     public function getOrFail()
@@ -72,7 +75,7 @@ class BelongsToRelationship
         $model = $this->get();
 
         if (is_null($model)) {
-            throw new ModelNotFoundException();
+            throw new ParentModelNotFoundException($this->parentClass, $this->child->getParentId());
         }
 
         return $model;

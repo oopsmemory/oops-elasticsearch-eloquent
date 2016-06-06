@@ -30,8 +30,8 @@ class ElasticsearchDAL implements IDAL
             $params['_source'] = $options['columns'];
         }
 
-        if (!empty($options['parent_id'])) {
-            $params['parent'] = $options['parent_id'];
+        if (!empty($options['parent'])) {
+            $params['parent'] = $options['parent'];
         }
 
         $response = $this->client->get($params);

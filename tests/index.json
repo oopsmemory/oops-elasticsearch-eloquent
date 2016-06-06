@@ -1,0 +1,10 @@
+{
+  "mappings": {
+    "orders": {},
+    "lines": {
+      "_parent": {
+        "type": "orders"
+      }
+    }
+  }
+}

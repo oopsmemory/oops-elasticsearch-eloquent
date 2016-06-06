@@ -4,11 +4,11 @@ namespace Isswp101\Persimmon;
 
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Isswp101\Persimmon\Contracts\Arrayable;
 use Isswp101\Persimmon\Contracts\Jsonable;
 use Isswp101\Persimmon\Contracts\Stringable;
 use Isswp101\Persimmon\DAL\IDAL;
+use Isswp101\Persimmon\Exceptions\ModelNotFoundException;
 use Isswp101\Persimmon\Traits\Cacheable;
 use Isswp101\Persimmon\Traits\Eventable;
 use Isswp101\Persimmon\Traits\Fillable;
@@ -19,7 +19,6 @@ use Isswp101\Persimmon\Traits\Presentable;
 use Isswp101\Persimmon\Traits\Timestampable;
 use Isswp101\Persimmon\Traits\Userable;
 use JsonSerializable;
-use ReflectionClass;
 
 abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializable
 {
@@ -202,17 +201,14 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
      *
      * @param mixed $id
      * @param array $columns
-     * @param int $parentId
+     * @param int $parent
      * @return static
      */
-    public static function findOrFail($id, array $columns = ['*'], $parentId = null)
+    public static function findOrFail($id, array $columns = ['*'], $parent = null)
     {
-        $model = static::find($id, $columns, ['parent_id' => $parentId]);
+        $model = static::find($id, $columns, ['parent' => $parent]);
         if (is_null($model)) {
-            $reflect = new ReflectionClass(get_called_class());
-            throw new ModelNotFoundException(sprintf(
-                'Model `%s` not found by id `%s`', $reflect->getShortName(), $id
-            ));
+            throw new ModelNotFoundException(get_called_class(), $id);
         }
         return $model;
     }

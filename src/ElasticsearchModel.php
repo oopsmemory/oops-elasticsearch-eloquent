@@ -3,15 +3,16 @@
 namespace Isswp101\Persimmon;
 
 use Elasticsearch\Client;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\DAL\ElasticsearchDAL;
+use Isswp101\Persimmon\Exceptions\ModelNotFoundException;
 use Isswp101\Persimmon\QueryBuilder\QueryBuilder;
+use Isswp101\Persimmon\Relationship\BelongsToRelationship;
+use Isswp101\Persimmon\Relationship\HasManyRelationship;
 use Isswp101\Persimmon\Traits\Elasticsearchable;
 use Isswp101\Persimmon\Traits\Paginationable;
 use Isswp101\Persimmon\Traits\Relationshipable;
-use ReflectionClass;
 
 class ElasticsearchModel extends Model
 {
@@ -36,13 +37,13 @@ class ElasticsearchModel extends Model
         // $this->injectLogger(app(Log::class));
     }
 
-    public static function findWithParentId($id, $parentId, array $columns = ['*'])
+    public static function findWithParentId($id, $parent, array $columns = ['*'])
     {
         /** @var static $model */
-        $model = parent::find($id, $columns, ['parent_id' => $parentId]);
+        $model = parent::find($id, $columns, ['parent' => $parent]);
 
         if ($model) {
-            $model->setParentId($parentId);
+            $model->setParentId($parent);
         }
 
         return $model;
@@ -83,15 +84,14 @@ class ElasticsearchModel extends Model
      * Execute the query and get the first result or throw an exception.
      *
      * @param QueryBuilder|array $query
-     * @return static
      * @throws ModelNotFoundException
+     * @return static
      */
     public static function firstOrFail($query = [])
     {
         $model = static::first($query);
         if (is_null($model)) {
-            $reflect = new ReflectionClass(get_called_class());
-            throw new ModelNotFoundException(sprintf('Model `%s` not found', $reflect->getShortName()));
+            throw new ModelNotFoundException(get_called_class());
         }
         return $model;
     }
@@ -150,5 +150,15 @@ class ElasticsearchModel extends Model
             $collection->put($document->getId(), $document);
         });
         return $collection;
+    }
+
+    protected function belongsTo($class)
+    {
+        return new BelongsToRelationship($this, $class);
+    }
+
+    protected function hasMany($class)
+    {
+        return new HasManyRelationship($this, $class);
     }
 }
