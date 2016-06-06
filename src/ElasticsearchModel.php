@@ -38,13 +38,13 @@ class ElasticsearchModel extends Model
         // $this->injectLogger(app(Log::class));
     }
 
-    public static function findWithParentId($id, $parentId, array $columns = ['*'])
+    public static function findWithParentId($id, $parent, array $columns = ['*'])
     {
         /** @var static $model */
-        $model = parent::find($id, $columns, ['parent_id' => $parentId]);
+        $model = parent::find($id, $columns, ['parent' => $parent]);
 
         if ($model) {
-            $model->setParentId($parentId);
+            $model->setParentId($parent);
         }
 
         return $model;
@@ -154,11 +154,13 @@ class ElasticsearchModel extends Model
         return $collection;
     }
 
-    protected function belongsTo($class) {
+    protected function belongsTo($class)
+    {
         return new BelongsToRelationship($this, $class);
     }
 
-    protected function hasMany($class) {
+    protected function hasMany($class)
+    {
         return new HasManyRelationship($this, $class);
     }
 }

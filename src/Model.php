@@ -202,12 +202,12 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
      *
      * @param mixed $id
      * @param array $columns
-     * @param int $parentId
+     * @param int $parent
      * @return static
      */
-    public static function findOrFail($id, array $columns = ['*'], $parentId = null)
+    public static function findOrFail($id, array $columns = ['*'], $parent = null)
     {
-        $model = static::find($id, $columns, ['parent_id' => $parentId]);
+        $model = static::find($id, $columns, ['parent' => $parent]);
         if (is_null($model)) {
             $reflect = new ReflectionClass(get_called_class());
             throw new ModelNotFoundException(sprintf(

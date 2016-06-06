@@ -16,21 +16,21 @@ class BelongsToRelationship
     /**
      * @var ElasticsearchModel
      */
-    protected $parentClassName;
+    protected $parentClass;
 
-    function __construct(ElasticsearchModel $child, $parentClassName)
+    public function __construct(ElasticsearchModel $child, $parentClass)
     {
         $this->child = $child;
-        $this->parentClassName = $parentClassName;
+        $this->parentClass = $parentClass;
     }
 
-    public function associate($parent)
+    public function associate(ElasticsearchModel $parent)
     {
         $this->child->setParent($parent);
     }
 
     /**
-     * Return parent instance via inner_hits objects.
+     * Return parent model.
      *
      * @return ElasticsearchModel
      */
@@ -38,26 +38,32 @@ class BelongsToRelationship
     {
         $parent = $this->child->getParent();
 
-        if (!$parent) {
-            $parentClassName = $this->parentClassName;
-            $innerHit = $this->child->getInnerHits()->getParent($parentClassName::getType());
-
-            if ($innerHit) {
-                $parent = new $parentClassName($innerHit);
-            } elseif ($this->child->getParentId()) {
-                $parent = $parentClassName::find($this->child->getParentId());
-            }
-
-            if (!$parent) {
-                $reflect = new ReflectionClass($parentClassName);
-                throw new ModelNotFoundException(sprintf(
-                    'Model `%s` not found by id `%s`. Try to use inner_hits.',
-                    $reflect->getShortName(), $this->child->getParentId()
-                ));
-            } else {
-                $this->child->setParent($parent);
-            }
+        if ($parent) {
+            return $parent;
         }
+
+        $parentClass = $this->parentClass;
+
+        $parentId = $this->child->getParentId();
+
+        $innerHits = $this->child->getInnerHits();
+
+        if ($innerHits) {
+            $attributes = $innerHits->getParent($parentClass::getType());
+            $parent = new $parentClass($attributes);
+        } elseif ($parentId) {
+            $parent = $parentClass::find($parentId);
+        }
+
+        if (!$parent) {
+            $reflection = new ReflectionClass($parentClass);
+            throw new ModelNotFoundException(sprintf(
+                'Model `%s` not found by id `%s`. Try to set parent id in your model or use inner_hits statement.',
+                $reflection->getShortName(), $parentId
+            ));
+        }
+
+        $this->child->setParent($parent);
 
         return $parent;
     }

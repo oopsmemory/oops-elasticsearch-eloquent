@@ -97,6 +97,7 @@ class RelationshipTest extends BaseTestCase
     {
         $line = PurchaseOrderLine::findWithParentId(1, 1);
         $po = $line->po()->getOrFail();
+        $this->assertEquals(1, $line->getParentId());
         $this->assertEquals(1, $po->getId());
     }
 
