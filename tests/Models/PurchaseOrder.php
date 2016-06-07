@@ -6,8 +6,8 @@ use Isswp101\Persimmon\ElasticsearchModel;
 
 class PurchaseOrder extends ElasticsearchModel
 {
-    protected static $index = 'test_parent_child_rel';
-    protected static $type = 'orders';
+    public static $index = 'test_parent_child_rel';
+    public static $type = 'orders';
 
     public $name;
 

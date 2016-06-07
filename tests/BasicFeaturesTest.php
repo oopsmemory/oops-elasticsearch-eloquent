@@ -20,6 +20,11 @@ use Isswp101\Persimmon\Test\Models\Product;
 
 class BasicFeaturesTest extends BaseTestCase
 {
+    public static function setUpBeforeClass()
+    {
+        Product::$index = 'travis_ci_test_' . time();
+    }
+
     public function testValidateModel()
     {
         $this->expectException(InvalidModelEndpointException::class);
@@ -36,9 +41,11 @@ class BasicFeaturesTest extends BaseTestCase
         } catch (Missing404Exception $e) {
         }
 
-        $this->sleep(10);
+        $this->sleep(3);
 
         $this->es->indices()->create(['index' => $index]);
+
+        $this->sleep(3);
 
         $query = ['index' => $index, 'type' => $type, 'body' => ['query' => ['match_all' => []]]];
         $res = $this->es->search($query);
@@ -113,7 +120,7 @@ class BasicFeaturesTest extends BaseTestCase
     {
         $product = Product::find(1);
         $product->name = 'Product 2';
-        $this->sleep(1);
+        $this->sleep(3);
         $product->save();
 
         $res = $this->es->get($product->getPath()->toArray());
@@ -184,6 +191,7 @@ class BasicFeaturesTest extends BaseTestCase
 
     public function testBasicSearch()
     {
+        $this->sleep(3);
         $products = Product::search();
         $product = $products->first();
 
@@ -252,7 +260,7 @@ class BasicFeaturesTest extends BaseTestCase
         Product::create(['id' => 1, 'name' => 'Product 1', 'price' => 10]);
         Product::create(['id' => 2, 'name' => 'Product 2', 'price' => 20]);
         Product::create(['id' => 3, 'name' => 'Product 3', 'price' => 30]);
-        $this->sleep(1);
+        $this->sleep(3);
 
         $query = new QueryBuilder();
         $query->match('name', 'Product');
@@ -325,5 +333,10 @@ class BasicFeaturesTest extends BaseTestCase
         $query->filter(new RangeOrExistFilter('price'));
         $products = Product::search($query);
         $this->assertEquals(3, $products->count());
+    }
+
+    public function testTearDown()
+    {
+        $this->deleteIndex(Product::$index);
     }
 }

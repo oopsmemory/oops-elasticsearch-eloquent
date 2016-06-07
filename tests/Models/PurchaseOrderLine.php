@@ -6,9 +6,9 @@ use Isswp101\Persimmon\ElasticsearchModel;
 
 class PurchaseOrderLine extends ElasticsearchModel
 {
-    protected static $index = 'test_parent_child_rel';
-    protected static $type = 'lines';
-    protected static $parentType = 'orders';
+    public static $index = 'test_parent_child_rel';
+    public static $type = 'lines';
+    public static $parentType = 'orders';
 
     public $name;
 

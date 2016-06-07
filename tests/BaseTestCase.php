@@ -5,6 +5,7 @@ namespace Isswp101\Persimmon\Test;
 use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use Elasticsearch\Client;
+use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Monolog\Logger;
 use Orchestra\Testbench\TestCase;
 
@@ -75,5 +76,18 @@ class BaseTestCase extends TestCase
     protected function sleep($seconds = 1)
     {
         sleep($seconds);
+    }
+
+    /**
+     * Delete index.
+     *
+     * @param mixed $index
+     */
+    protected function deleteIndex($index)
+    {
+        try {
+            $this->es->indices()->delete(['index' => $index]);
+        } catch (Missing404Exception $e) {
+        }
     }
 }

@@ -9,6 +9,13 @@ use Isswp101\Persimmon\Test\Models\PurchaseOrderLine;
 
 class RelationshipTest extends BaseTestCase
 {
+    public static function setUpBeforeClass()
+    {
+        $hash = time();
+        PurchaseOrder::$index = 'travis_ci_test_parent_child_rel_' . $hash;
+        PurchaseOrderLine::$index = 'travis_ci_test_parent_child_rel_' . $hash;
+    }
+
     public function testPrepareIndex()
     {
         $index = PurchaseOrderLine::getIndex();
@@ -18,7 +25,7 @@ class RelationshipTest extends BaseTestCase
         } catch (Missing404Exception $e) {
         }
 
-        $this->sleep(10);
+        $this->sleep(3);
 
         $settings = file_get_contents(__DIR__ . '/index.json');
         $this->es->indices()->create(['index' => $index, 'body' => $settings]);
@@ -112,6 +119,11 @@ class RelationshipTest extends BaseTestCase
         $this->assertEquals(1, $lines->count());
         $this->assertEquals($line->toArray(), $lines->first()->toArray());
         $this->assertEquals($line->getParent()->toArray(), $lines->first()->getParent()->toArray());
+    }
+
+    public function testTearDown()
+    {
+        $this->deleteIndex(PurchaseOrderLine::$index);
     }
 }
 
