@@ -66,4 +66,14 @@ class BaseTestCase extends TestCase
             return new Client($params);
         });
     }
+
+    /**
+     * Sleep.
+     *
+     * @param int $seconds
+     */
+    protected function sleep($seconds = 1)
+    {
+        sleep($seconds);
+    }
 }

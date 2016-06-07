@@ -18,7 +18,7 @@ class RelationshipTest extends BaseTestCase
         } catch (Missing404Exception $e) {
         }
 
-        sleep(2);
+        $this->sleep(10);
 
         $settings = file_get_contents(__DIR__ . '/index.json');
         $this->es->indices()->create(['index' => $index, 'body' => $settings]);
@@ -114,3 +114,4 @@ class RelationshipTest extends BaseTestCase
         $this->assertEquals($line->getParent()->toArray(), $lines->first()->getParent()->toArray());
     }
 }
+

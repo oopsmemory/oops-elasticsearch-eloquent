@@ -36,7 +36,7 @@ class BasicFeaturesTest extends BaseTestCase
         } catch (Missing404Exception $e) {
         }
 
-        sleep(2);
+        $this->sleep(10);
 
         $this->es->indices()->create(['index' => $index]);
 
@@ -113,7 +113,7 @@ class BasicFeaturesTest extends BaseTestCase
     {
         $product = Product::find(1);
         $product->name = 'Product 2';
-        sleep(1);
+        $this->sleep(1);
         $product->save();
 
         $res = $this->es->get($product->getPath()->toArray());
@@ -252,7 +252,7 @@ class BasicFeaturesTest extends BaseTestCase
         Product::create(['id' => 1, 'name' => 'Product 1', 'price' => 10]);
         Product::create(['id' => 2, 'name' => 'Product 2', 'price' => 20]);
         Product::create(['id' => 3, 'name' => 'Product 3', 'price' => 30]);
-        sleep(1);
+        $this->sleep(1);
 
         $query = new QueryBuilder();
         $query->match('name', 'Product');
