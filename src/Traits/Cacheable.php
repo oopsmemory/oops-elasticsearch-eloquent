@@ -18,7 +18,8 @@ trait Cacheable
      *
      * @return RuntimeCache
      */
-    final protected static function cache() {
+    final protected static function cache()
+    {
         if (!array_key_exists(static::class, self::$cache)) {
             self::$cache[static::class] = new RuntimeCache();
         }

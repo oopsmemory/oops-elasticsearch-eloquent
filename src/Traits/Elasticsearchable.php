@@ -70,13 +70,15 @@ trait Elasticsearchable
     {
         if (!$this->getIndex()) {
             throw new InvalidModelEndpointException(sprintf(
-                'Please specify the index for your Elasticsearch model %s', static::class
+                'Please specify the index for your Elasticsearch model %s',
+                static::class
             ));
         }
 
         if (!$this->getType()) {
             throw new InvalidModelEndpointException(sprintf(
-                'Please specify the type for your Elasticsearch model %s', static::class
+                'Please specify the type for your Elasticsearch model %s',
+                static::class
             ));
         }
     }

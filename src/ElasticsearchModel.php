@@ -103,7 +103,7 @@ class ElasticsearchModel extends Model
      * @param int $limit
      * @return int hits.total
      */
-    public static function map($query = [], callable $callback, $limit = -1)
+    public static function map($query = [], callable $callback = null, $limit = -1)
     {
         if ($query instanceof QueryBuilder) {
             $query = $query->build();
@@ -117,7 +117,9 @@ class ElasticsearchModel extends Model
         $total = $models->getTotal();
         while ($models) {
             foreach ($models as $model) {
-                $callback($model);
+                if ($callback) {
+                    $callback($model);
+                }
                 $i++;
             }
 
