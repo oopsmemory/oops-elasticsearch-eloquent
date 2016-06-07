@@ -91,12 +91,26 @@ class RelationshipTest extends BaseTestCase
         $this->assertEquals('Line1', $res['_source']['name']);
     }
 
-    /** @group fail */
     public function testGetParent()
     {
         $line = PurchaseOrderLine::findWithParentId(1, 1);
         $po = $line->po()->getOrFail();
         $this->assertEquals(1, $line->getParentId());
         $this->assertEquals(1, $po->getId());
+    }
+
+    public function testGetChildren()
+    {
+        $po = PurchaseOrder::findOrFail(1);
+
+        $line = $po->lines()->find(1);
+        $this->assertEquals(1, $line->getId());
+        $this->assertEquals(1, $line->getParentId());
+        $this->assertSame($po, $line->getParent());
+
+        $lines = $po->lines()->get();
+        $this->assertEquals(1, $lines->count());
+        $this->assertEquals($line->toArray(), $lines->first()->toArray());
+        $this->assertEquals($line->getParent()->toArray(), $lines->first()->getParent()->toArray());
     }
 }

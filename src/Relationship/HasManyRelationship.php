@@ -2,6 +2,7 @@
 
 namespace Isswp101\Persimmon\Relationship;
 
+use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\ElasticsearchModel;
 use Isswp101\Persimmon\QueryBuilder\Filters\ParentFilter;
 use Isswp101\Persimmon\QueryBuilder\QueryBuilder;
@@ -27,21 +28,25 @@ class HasManyRelationship
     /**
      * Find all children.
      *
-     * @return ElasticsearchModel[]
+     * @return ElasticsearchCollection|ElasticsearchModel[]
      */
     public function get()
     {
         $child = $this->childClassName;
         $query = new QueryBuilder();
         $query->filter(new ParentFilter($this->parent->getId()));
-        return $child::search($query);
+        $collection = $child::search($query);
+        $collection->each(function (ElasticsearchModel $model) {
+            $model->setParent($this->parent);
+        });
+        return $collection;
     }
 
     /**
-     * Find document by id.
+     * Find model by id.
      *
      * @param mixed $id
-     * @return ElasticsearchModel
+     * @return ElasticsearchModel|null
      */
     public function find($id)
     {
