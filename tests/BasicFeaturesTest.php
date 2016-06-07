@@ -314,7 +314,6 @@ class BasicFeaturesTest extends BaseTestCase
         $this->assertEquals(3, $products->last()->getId());
     }
 
-    /** @group failing */
     public function testRangeOrExistFilter()
     {
         $query = new QueryBuilder();
