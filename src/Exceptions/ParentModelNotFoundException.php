@@ -14,7 +14,7 @@ class ParentModelNotFoundException extends Exception
         $model = $reflection->getShortName();
 
         $message = sprintf(
-            'Model `%s` not found by id `%s`. Try to set parent id in your model or use inner_hits statement.',
+            'Model `%s` not found by id `%s`. Try to set parent id in your model or use inner_hits feature.',
             $model, $id
         );
 
