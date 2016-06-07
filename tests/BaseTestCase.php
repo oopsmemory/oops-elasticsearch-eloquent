@@ -3,6 +3,7 @@
 namespace Isswp101\Persimmon\Test;
 
 use Dotenv\Dotenv;
+use Dotenv\Exception\InvalidPathException;
 use Elasticsearch\Client;
 use Monolog\Logger;
 use Orchestra\Testbench\TestCase;
@@ -32,7 +33,11 @@ class BaseTestCase extends TestCase
     protected function loadDotenv()
     {
         $dotenv = new Dotenv(__DIR__);
-        $dotenv->load();
+        try {
+            $dotenv->load();
+        } catch (InvalidPathException $e) {
+            // It's workaround for Travis CI
+        }
     }
 
     /**
