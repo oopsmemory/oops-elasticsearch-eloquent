@@ -252,6 +252,7 @@ $buckets = $products->getAggregation('name');
 The parent-child relationship is similar in nature to the nested model: both allow you to associate one entity with another. The difference is that, with nested objects, all entities live within the same document while, with parent-child, the parent and children are completely separate documents.
 
 Let's create two models:
+
 1. `PurchaseOrder` has many `PurchaseOrderLine` models
 2. `PurchaseOrderLine` belongs to `PurchaseOrder` model
 
