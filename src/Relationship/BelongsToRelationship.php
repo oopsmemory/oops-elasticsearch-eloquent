@@ -25,7 +25,7 @@ class BelongsToRelationship
 
     /**
      * Associate parent document.
-     * 
+     *
      * @param ElasticsearchModel $parent
      */
     public function associate(ElasticsearchModel $parent)
