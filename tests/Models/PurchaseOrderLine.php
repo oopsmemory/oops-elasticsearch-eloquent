@@ -8,6 +8,7 @@ class PurchaseOrderLine extends ElasticsearchModel
 {
     protected static $index = 'test_parent_child_rel';
     protected static $type = 'lines';
+    protected static $parentType = 'orders';
 
     public $name;
 
