@@ -137,4 +137,3 @@ class RelationshipTest extends BaseTestCase
         $this->deleteIndex(PurchaseOrderLine::$index);
     }
 }
-
