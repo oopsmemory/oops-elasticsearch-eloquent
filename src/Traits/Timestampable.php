@@ -7,12 +7,12 @@ use Carbon\Carbon;
 trait Timestampable
 {
     /**
-     * @var Carbon
+     * @var string
      */
     public $created_at;
 
     /**
-     * @var Carbon
+     * @var string
      */
     public $updated_at;
 
