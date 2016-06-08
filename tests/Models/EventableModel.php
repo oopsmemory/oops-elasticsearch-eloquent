@@ -23,38 +23,17 @@ class EventableModel extends ElasticsearchModel
         $this->price = 1050;
     }
 
-    protected function updating()
-    {
-        return true;
-    }
-
-    protected function updated()
-    {
-        return true;
-    }
-
-    protected function creating()
-    {
-        return true;
-    }
-
-    protected function created()
-    {
-        return true;
-
-    }
-
     protected function deleting()
     {
         if ($this->price !== 100)
         {
-            throw new Exception();
+            return false;
         }
     }
 
     protected function deleted()
     {
-        throw new Exception();
+        $this->price = 1;
     }
 
 }
