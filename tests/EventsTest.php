@@ -3,7 +3,6 @@
 namespace Isswp101\Persimmon\Test;
 
 use Isswp101\Persimmon\Test\Models\EventableModel;
-use Exception;
 
 class EventsTest extends BaseTestCase
 {
@@ -32,14 +31,13 @@ class EventsTest extends BaseTestCase
         $model->id = 2;
         $model->save();
 
-        $this->assertTrue($model->_exist);
-
         $model->delete();
         $this->assertTrue($model->_exist);
 
         $model->price = 100;
 
         $model->delete();
+        $this->assertFalse($model->_exist);
         $this->assertEquals(1, $model->price);
     }
 
@@ -47,5 +45,4 @@ class EventsTest extends BaseTestCase
     {
         $this->deleteIndex(EventableModel::$index);
     }
-
 }

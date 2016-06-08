@@ -3,7 +3,6 @@
 namespace Isswp101\Persimmon\Test\Models;
 
 use Isswp101\Persimmon\ElasticsearchModel;
-use Exception;
 
 class EventableModel extends ElasticsearchModel
 {
@@ -25,15 +24,15 @@ class EventableModel extends ElasticsearchModel
 
     protected function deleting()
     {
-        if ($this->price !== 100)
-        {
+        if ($this->price !== 100) {
             return false;
         }
+
+        return true;
     }
 
     protected function deleted()
     {
         $this->price = 1;
     }
-
 }
