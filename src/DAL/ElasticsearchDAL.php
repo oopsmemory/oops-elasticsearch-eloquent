@@ -107,7 +107,7 @@ class ElasticsearchDAL implements IDAL
 
         $collection->response($response);
 
-        $from = $params['from'];
+        $from = (int)$params['from'];
         foreach ($response['hits']['hits'] as $hit) {
             $model = $this->model->createInstance();
             $model->_score = $hit['_score'];
