@@ -362,12 +362,23 @@ $line = $po->lines()->find(1); // by id
 $lines = $po->lines()->get(); // all children
 ```
 
+### Inner hits
+
+The parent/child and nested features allow the return of documents that have matches in a different scope. In the parent/child case, parent document are returned based on matches in child documents or child document are returned based on matches in parent documents. In the nested case, documents are returned based on matches in nested inner objects.
+
+You can get parent model using only one request with `InnerHitsFilter` filter:
+
+```php
+$query = new QueryBuilder();
+$query->filter(new InnerHitsFilter(PurchaseOrderLine::getParentType()));
+$line = PurchaseOrderLine::search($query)->first();
+$po = $line->po()->get(); // will be retrieved from inner_hits cache
+```
+
 **TO BE CONTINUED...**
 
 @TODO:
 * Add documentation about filters
-* Add documentation about events
-* Add documentation about inner_hits feature
 
 
 ## Change log
