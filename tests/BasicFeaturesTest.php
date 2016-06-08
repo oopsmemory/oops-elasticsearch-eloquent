@@ -22,7 +22,7 @@ class BasicFeaturesTest extends BaseTestCase
 {
     public static function setUpBeforeClass()
     {
-        Product::$index = 'travis_ci_test_' . time();
+        Product::$index = 'travis_ci_test_' . time() . rand(1, 1000);
     }
 
     public function testValidateModel()

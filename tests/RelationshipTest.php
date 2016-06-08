@@ -4,6 +4,8 @@ namespace Isswp101\Persimmon\Test;
 
 use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
+use Isswp101\Persimmon\QueryBuilder\Filters\InnerHitsFilter;
+use Isswp101\Persimmon\QueryBuilder\QueryBuilder;
 use Isswp101\Persimmon\Test\Models\PurchaseOrder;
 use Isswp101\Persimmon\Test\Models\PurchaseOrderLine;
 
@@ -11,7 +13,7 @@ class RelationshipTest extends BaseTestCase
 {
     public static function setUpBeforeClass()
     {
-        $hash = time();
+        $hash = time() . rand(1, 1000);
         PurchaseOrder::$index = 'travis_ci_test_parent_child_rel_' . $hash;
         PurchaseOrderLine::$index = 'travis_ci_test_parent_child_rel_' . $hash;
     }
@@ -121,9 +123,17 @@ class RelationshipTest extends BaseTestCase
         $this->assertEquals($line->getParent()->toArray(), $lines->first()->getParent()->toArray());
     }
 
+    public function testInnerHits()
+    {
+        $query = new QueryBuilder();
+        $query->filter(new InnerHitsFilter(PurchaseOrderLine::getParentType()));
+        $lines = PurchaseOrderLine::search($query);
+        $line = $lines->first();
+        $this->assertEquals(1, $line->po()->getOrFail()->getId());
+    }
+
     public function testTearDown()
     {
         $this->deleteIndex(PurchaseOrderLine::$index);
     }
 }
-
