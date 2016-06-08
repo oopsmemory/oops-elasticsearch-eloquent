@@ -153,7 +153,9 @@ class BasicFeaturesTest extends BaseTestCase
         Product::create(['id' => 6, 'name' => 'Product 6', 'price' => 66]);
         $product = Product::find(6);
         $this->assertNotNull($product);
+        $this->assertTrue($product->_exist);
         $product->delete();
+        $this->assertFalse($product->_exist);
 
         $this->expectException(Missing404Exception::class);
         $this->es->get($product->getPath()->toArray());

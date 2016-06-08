@@ -120,6 +120,8 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
 
         $this->_dal->delete();
 
+        $this->_exist = false;
+
         $cache = self::cache();
         $cache->forget($this->getId());
 
