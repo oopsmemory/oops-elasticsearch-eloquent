@@ -11,7 +11,7 @@ class RelationshipTest extends BaseTestCase
 {
     public static function setUpBeforeClass()
     {
-        $hash = time();
+        $hash = time() . rand(1, 1000);
         PurchaseOrder::$index = 'travis_ci_test_parent_child_rel_' . $hash;
         PurchaseOrderLine::$index = 'travis_ci_test_parent_child_rel_' . $hash;
     }
