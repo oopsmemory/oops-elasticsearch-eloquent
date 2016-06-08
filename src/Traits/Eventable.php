@@ -14,26 +14,6 @@ trait Eventable
         return true;
     }
 
-    protected function updating()
-    {
-        return true;
-    }
-
-    protected function updated()
-    {
-        return true;
-    }
-
-    protected function creating()
-    {
-        return true;
-    }
-
-    protected function created()
-    {
-        return true;
-    }
-
     protected function deleting()
     {
         return true;
