@@ -132,4 +132,14 @@ trait Elasticsearchable
     {
         return $this->_position;
     }
+
+    abstract public function fill(array $attributes);
+
+    abstract public function getId();
+
+    abstract public function setId($id);
+
+    abstract public function getParentId();
+
+    abstract public function setParentId($id);
 }
