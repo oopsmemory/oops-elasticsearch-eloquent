@@ -59,7 +59,9 @@ class BelongsToRelationship
             $parent = $parentClass::find($parentId);
         }
 
-        $this->child->setParent($parent);
+        if ($parent) {
+            $this->child->setParent($parent);
+        }
 
         return $parent;
     }
