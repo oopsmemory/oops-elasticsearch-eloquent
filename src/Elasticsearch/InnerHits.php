@@ -13,12 +13,12 @@ class InnerHits
 
     public function getParentId($parentType)
     {
-        return array_get($this->hits, 'inner_hits.' . $parentType . '.hits.hits.0._id');
+        return array_get($this->hits, $parentType . '.hits.hits.0._id');
     }
 
     public function getParent($parentType)
     {
-        return array_get($this->hits, 'inner_hits.' . $parentType . '.hits.hits.0');
+        return array_get($this->hits, $parentType . '.hits.hits.0._source');
     }
 
     public function get()
