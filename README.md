@@ -138,6 +138,47 @@ You can use the static method:
 Product::destroy(1);
 ```
 
+### Model events
+
+Out of the box you are provided with a simple implementation of events.  
+You can override the following methods to define events:
+
+* `saving()` is called before saving, updating, creating the model
+* `saved()` is called after saving, updating, creating the model
+* `deleting()` is called before deleting the model
+* `deleted()` is called after deleting the model
+
+For example:
+
+```php
+class Product extends ElasticsearchModel
+{
+    public static $index = 'test';
+    public static $type = 'test';
+
+    public $name;
+    public $price = 0;
+
+    protected function saving()
+    {
+        if ($this->price <= 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function deleting()
+    {
+        if (!$this->canDelete()) {
+            throw new LogicException('No permissions to delete the model');
+        }
+
+        return true;
+    }
+}
+```
+
 ### Basic search
 
 There are helpers to search documents:
