@@ -69,14 +69,6 @@ class QueryBuilder
      */
     public function filter($filter = [], $mode = Filter::MODE_INCLUDE)
     {
-        $map = [
-            Filter::MODE_INCLUDE => 'must',
-            Filter::MODE_EXCLUDE => 'must_not',
-            'should' => 'should'
-        ];
-
-        $mode = $map[$mode];
-
         if (!$filter) {
             unset($this->query['body']['filter']);
             return $this;
@@ -85,6 +77,14 @@ class QueryBuilder
         if ($filter instanceof Filter) {
             $filter = $filter->makeQuery();
         }
+
+        $map = [
+            Filter::MODE_INCLUDE => 'must',
+            Filter::MODE_EXCLUDE => 'must_not',
+            'should' => 'should'
+        ];
+
+        $mode = $map[$mode];
 
         $this->merge($filter, $mode);
 
