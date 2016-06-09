@@ -13,7 +13,6 @@ use Isswp101\Persimmon\Traits\Cacheable;
 use Isswp101\Persimmon\Traits\Eventable;
 use Isswp101\Persimmon\Traits\Fillable;
 use Isswp101\Persimmon\Traits\Idable;
-use Isswp101\Persimmon\Traits\Logable;
 use Isswp101\Persimmon\Traits\Mergeable;
 use Isswp101\Persimmon\Traits\Presentable;
 use Isswp101\Persimmon\Traits\Timestampable;
@@ -22,9 +21,9 @@ use JsonSerializable;
 
 abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializable
 {
-    use Idable, Userable, Timestampable;
-    use Fillable, Cacheable, Logable;
     use Presentable, Eventable, Mergeable;
+    use Idable, Userable, Timestampable;
+    use Fillable, Cacheable;
 
     /**
      * @var IDAL
@@ -39,26 +38,15 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
     /**
      * Create a new instance.
      *
+     * @param IDAL $dal
      * @param array $attributes
      */
-    public function __construct(array $attributes = [])
+    public function __construct(IDAL $dal, array $attributes = [])
     {
-        $this->injectDependencies();
+        $this->_dal = $dal;
 
         $this->fill($attributes);
     }
-
-    /**
-     * Inject data access layer.
-     *
-     * @param IDAL $dal
-     */
-    protected function injectDataAccessLayer(IDAL $dal)
-    {
-        $this->_dal = $dal;
-    }
-
-    abstract public function injectDependencies();
 
     /**
      * {@inheritdoc}

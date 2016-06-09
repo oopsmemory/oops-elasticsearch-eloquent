@@ -2,6 +2,7 @@
 
 namespace Isswp101\Persimmon\Collection;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Isswp101\Persimmon\QueryBuilder\Aggregations\Bucket;
 
@@ -72,7 +73,7 @@ class ElasticsearchCollection extends Collection
     public function getAggregation($name)
     {
         $buckets = [];
-        $items = array_get($this->response, 'aggregations.' . $name . '.buckets', []);
+        $items = Arr::get($this->response, 'aggregations.' . $name . '.buckets', []);
         foreach ($items as $item) {
             $buckets[] = new Bucket($item['key'], $item['doc_count']);
         }

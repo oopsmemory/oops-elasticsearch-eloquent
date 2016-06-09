@@ -2,6 +2,8 @@
 
 namespace Isswp101\Persimmon\Elasticsearch;
 
+use Illuminate\Support\Arr;
+
 class Response
 {
     public $index;
@@ -11,10 +13,10 @@ class Response
 
     public function __construct(array $res)
     {
-        $this->index = array_get($res, '_index');
-        $this->type = array_get($res, '_type');
-        $this->id = array_get($res, '_id');
-        $this->source = array_get($res, '_source', []);
+        $this->index = Arr::get($res, '_index');
+        $this->type = Arr::get($res, '_type');
+        $this->id = Arr::get($res, '_id');
+        $this->source = Arr::get($res, '_source', []);
     }
 
     /**

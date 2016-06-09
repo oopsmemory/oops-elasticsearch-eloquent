@@ -2,23 +2,25 @@
 
 namespace Isswp101\Persimmon\Elasticsearch;
 
+use Illuminate\Support\Arr;
+
 class InnerHits
 {
     protected $hits = [];
 
     public function __construct(array $response)
     {
-        $this->hits = array_get($response, 'inner_hits', []);
+        $this->hits = Arr::get($response, 'inner_hits', []);
     }
 
     public function getParentId($parentType)
     {
-        return array_get($this->hits, $parentType . '.hits.hits.0._id');
+        return Arr::get($this->hits, $parentType . '.hits.hits.0._id');
     }
 
     public function getParent($parentType)
     {
-        return array_get($this->hits, $parentType . '.hits.hits.0._source');
+        return Arr::get($this->hits, $parentType . '.hits.hits.0._source');
     }
 
     public function get()

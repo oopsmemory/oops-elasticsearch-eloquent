@@ -3,18 +3,22 @@
 namespace Isswp101\Persimmon\DAL;
 
 use Elasticsearch\Client;
+use Illuminate\Support\Arr;
 use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\ElasticsearchModel;
+use Psr\Log\LoggerInterface;
 
 class ElasticsearchDAL implements IDAL
 {
     protected $model;
     protected $client;
+    protected $logger;
 
-    public function __construct(ElasticsearchModel $model, Client $client = null)
+    public function __construct(ElasticsearchModel $model, Client $client, LoggerInterface $logger = null)
     {
         $this->model = $model;
         $this->client = $client;
+        $this->logger = $logger;
     }
 
     public function getModel()
@@ -91,14 +95,13 @@ class ElasticsearchDAL implements IDAL
         $params = [
             'index' => $this->model->getIndex(),
             'type' => $this->model->getType(),
-            'from' => array_get($query, 'from', 0),
-            'size' => array_get($query, 'size', 50),
+            'from' => Arr::get($query, 'from', 0),
+            'size' => Arr::get($query, 'size', 50),
             'body' => $query['body']
         ];
 
-        // @TODO: use own logger, not model logger
-        if ($this->model->hasLogger()) {
-            $this->model->getLogger()->debug('Query', $params);
+        if ($this->logger) {
+            $this->logger->debug('Query', $params);
         }
 
         $collection = new ElasticsearchCollection();
