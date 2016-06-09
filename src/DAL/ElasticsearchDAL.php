@@ -6,19 +6,18 @@ use Elasticsearch\Client;
 use Illuminate\Support\Arr;
 use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\ElasticsearchModel;
-use Psr\Log\LoggerInterface;
 
 class ElasticsearchDAL implements IDAL
 {
     protected $model;
     protected $client;
-    protected $logger;
+    protected $emitter;
 
-    public function __construct(ElasticsearchModel $model, Client $client, LoggerInterface $logger = null)
+    public function __construct(ElasticsearchModel $model, Client $client, DALMediator $emitter)
     {
         $this->model = $model;
         $this->client = $client;
-        $this->logger = $logger;
+        $this->emitter = $emitter;
     }
 
     public function getModel()
@@ -100,13 +99,13 @@ class ElasticsearchDAL implements IDAL
             'body' => $query['body']
         ];
 
-        if ($this->logger) {
-            $this->logger->debug('Query', $params);
-        }
-
         $collection = new ElasticsearchCollection();
 
+        $this->emitter->trigger(DALMediator::EVENT_BEFORE_SEARCH, $params);
+
         $response = $this->client->search($params);
+
+        $this->emitter->trigger(DALMediator::EVENT_AFTER_SEARCH, $response);
 
         $collection->response($response);
 
