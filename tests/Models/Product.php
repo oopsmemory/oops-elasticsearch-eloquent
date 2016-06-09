@@ -2,8 +2,6 @@
 
 namespace Isswp101\Persimmon\Test\Models;
 
-use Isswp101\Persimmon\ElasticsearchModel;
-
 class Product extends ElasticsearchModel
 {
     public static $index = 'test';

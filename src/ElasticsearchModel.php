@@ -2,10 +2,10 @@
 
 namespace Isswp101\Persimmon;
 
-use Elasticsearch\Client;
 use Illuminate\Support\Collection;
 use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\DAL\ElasticsearchDAL;
+use Isswp101\Persimmon\DAL\IDAL;
 use Isswp101\Persimmon\Exceptions\ModelNotFoundException;
 use Isswp101\Persimmon\QueryBuilder\QueryBuilder;
 use Isswp101\Persimmon\Relationship\BelongsToRelationship;
@@ -23,18 +23,11 @@ class ElasticsearchModel extends Model
      */
     public $_dal;
 
-    public function __construct(array $attributes = [])
+    public function __construct(IDAL $dal, array $attributes = [])
     {
         $this->validateModelEndpoint();
 
-        parent::__construct($attributes);
-    }
-
-    public function injectDependencies()
-    {
-        // @TODO: move logger to DAL
-        $this->injectDataAccessLayer(new ElasticsearchDAL($this, app(Client::class)));
-        // $this->injectLogger(app(Log::class));
+        parent::__construct($dal, $attributes);
     }
 
     public static function findWithParentId($id, $parent, array $columns = ['*'])
