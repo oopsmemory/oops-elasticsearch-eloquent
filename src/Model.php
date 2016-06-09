@@ -43,19 +43,9 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
      */
     public function __construct(IDAL $dal, array $attributes = [])
     {
-        $this->injectDataAccessLayer($dal);
+        $this->_dal = $dal;
 
         $this->fill($attributes);
-    }
-
-    /**
-     * Inject data access layer.
-     *
-     * @param IDAL $dal
-     */
-    protected function injectDataAccessLayer(IDAL $dal)
-    {
-        $this->_dal = $dal;
     }
 
     /**
