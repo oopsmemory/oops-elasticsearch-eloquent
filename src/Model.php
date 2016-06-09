@@ -121,11 +121,14 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
     }
 
     /**
+     * Create a new instance.
+     *
+     * @param array $attributes
      * @return static
      */
-    final public static function createInstance()
+    public static function createInstance(array $attributes = [])
     {
-        return new static();
+        return new static(null, $attributes);
     }
 
     /**
