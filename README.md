@@ -20,13 +20,39 @@ $ composer require isswp101/elasticsearch-eloquent
 
 ## Usage
 
+### Configure dependencies
+
+> **Warning!** First of all you should create a base model and inherit from it their models.
+
+```php
+use Elasticsearch\Client;
+use Isswp101\Persimmon\DAL\DALMediator;
+use Isswp101\Persimmon\DAL\ElasticsearchDAL;
+use Isswp101\Persimmon\ElasticsearchModel as Model;
+
+class ElasticsearchModel extends Model
+{
+    public function __construct(array $attributes = [])
+    {
+        $dal = new ElasticsearchDAL($this, app(Client::class), new DALMediator());
+
+        parent::__construct($dal, $attributes);
+    }
+
+    public static function createInstance()
+    {
+        return new static();
+    }
+}
+```
+
+In this example we use Laravel IoC Container to resolve `Elasticsearch\Client` dependency as `app(Client::class)`.
+
 ### Create a new model
 
 You must override static variables `index` and `type` to determine the document path.
 
 ```php
-use Isswp101\Persimmon\ElasticsearchModel;
-
 class Product extends ElasticsearchModel
 {
     protected static $index = 'test';
@@ -374,6 +400,44 @@ $query->filter(new InnerHitsFilter(PurchaseOrderLine::getParentType()));
 $line = PurchaseOrderLine::search($query)->first();
 $po = $line->po()->get(); // will be retrieved from inner_hits cache
 ```
+
+### Debugging and data access layer events
+
+To debug all elasticsearch queries to search you can use own `DALEmitter` class:
+
+```php
+use Isswp101\Persimmon\DAL\DALMediator;
+use Log;
+
+class DALEmitter extends DALMediator
+{
+    public function __construct()
+    {
+        $this->attach(DALMediator::EVENT_BEFORE_SEARCH, function (array $params) {
+            Log::debug('Elasticsearch query', $params);
+        });
+    }
+}
+```
+
+And configure it in your service provider:
+
+```php
+class ElasticsearchModel extends Model
+{
+    public function __construct(array $attributes = [])
+    {
+        $dal = new ElasticsearchDAL($this, app(Client::class), new DALEmitter());
+
+        parent::__construct($dal, $attributes);
+    }
+    // ...
+}
+```
+
+There are the following events:
+* `DALMediator::EVENT_BEFORE_SEARCH` is triggered before any search.
+* `DALMediator::EVENT_AFTER_SEARCH` is triggered after any search.
 
 **TO BE CONTINUED...**
 
