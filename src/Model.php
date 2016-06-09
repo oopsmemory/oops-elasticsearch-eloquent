@@ -18,6 +18,7 @@ use Isswp101\Persimmon\Traits\Presentable;
 use Isswp101\Persimmon\Traits\Timestampable;
 use Isswp101\Persimmon\Traits\Userable;
 use JsonSerializable;
+use LogicException;
 
 abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializable
 {
@@ -122,12 +123,10 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
 
     /**
      * Create a new instance.
-     *
-     * @return static
      */
     public static function createInstance()
     {
-        return new static(null);
+        throw new LogicException('Should be overridden and return new static(args)');
     }
 
     /**
