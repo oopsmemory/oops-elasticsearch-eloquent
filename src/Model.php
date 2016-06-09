@@ -123,6 +123,8 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
 
     /**
      * Create a new instance.
+     *
+     * @return static
      */
     public static function createInstance()
     {
