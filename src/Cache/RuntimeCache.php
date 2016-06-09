@@ -95,8 +95,8 @@ class RuntimeCache
         if (!$this->has($key)) {
             return $attributes;
         }
-        $cached_attributes = $this->cache[$key]['attributes'];
-        return $cached_attributes == ['*'] ? [] : array_diff($attributes, $cached_attributes);
+        $cachedAttributes = $this->cache[$key]['attributes'];
+        return $cachedAttributes == ['*'] ? [] : array_diff($attributes, $cachedAttributes);
     }
 
     /**
