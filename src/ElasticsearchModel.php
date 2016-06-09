@@ -2,6 +2,7 @@
 
 namespace Isswp101\Persimmon;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\DAL\ElasticsearchDAL;
@@ -102,8 +103,8 @@ class ElasticsearchModel extends Model
             $query = $query->build();
         }
 
-        $query['from'] = array_get($query, 'from', 0);
-        $query['size'] = array_get($query, 'size', 50);
+        $query['from'] = Arr::get($query, 'from', 0);
+        $query['size'] = Arr::get($query, 'size', 50);
 
         $i = 0;
         $models = static::search($query);

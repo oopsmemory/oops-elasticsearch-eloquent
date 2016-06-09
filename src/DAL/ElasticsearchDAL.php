@@ -3,6 +3,7 @@
 namespace Isswp101\Persimmon\DAL;
 
 use Elasticsearch\Client;
+use Illuminate\Support\Arr;
 use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\ElasticsearchModel;
 use Psr\Log\LoggerInterface;
@@ -94,8 +95,8 @@ class ElasticsearchDAL implements IDAL
         $params = [
             'index' => $this->model->getIndex(),
             'type' => $this->model->getType(),
-            'from' => array_get($query, 'from', 0),
-            'size' => array_get($query, 'size', 50),
+            'from' => Arr::get($query, 'from', 0),
+            'size' => Arr::get($query, 'size', 50),
             'body' => $query['body']
         ];
 
