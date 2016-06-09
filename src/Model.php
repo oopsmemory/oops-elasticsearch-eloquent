@@ -128,7 +128,7 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
      */
     public static function createInstance()
     {
-        throw new LogicException('Should be overridden and return new static(args)');
+        throw new LogicException('Static method `createInstance()` must be overridden and return `new static(args)`');
     }
 
     /**
