@@ -1,10 +1,10 @@
 {
     "name": "isswp101/elasticsearch-eloquent",
     "type": "library",
-    "description": "Eloquent-like models to Elasticsearch with advanced features",
+    "description": "Elasticsearch functionality like Laravel Eloquent models",
     "keywords": [
-        "isswp101",
-        "elasticsearch-eloquent"
+        "elasticsearch",
+        "eloquent"
     ],
     "homepage": "https://github.com/isswp101/elasticsearch-eloquent",
     "license": "MIT",
