@@ -34,7 +34,7 @@ class ElasticsearchModel extends Model
 {
     public function __construct(array $attributes = [])
     {
-        $dal = new ElasticsearchDAL($this, app(Client::class), new EventEmitter());
+        $dal = new ElasticsearchDAL($this, app(Client::class), app(EventEmitter::class));
 
         parent::__construct($dal, $attributes);
     }
