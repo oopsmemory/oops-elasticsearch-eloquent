@@ -26,15 +26,15 @@ $ composer require isswp101/elasticsearch-eloquent
 
 ```php
 use Elasticsearch\Client;
-use Isswp101\Persimmon\DAL\DALMediator;
 use Isswp101\Persimmon\DAL\ElasticsearchDAL;
 use Isswp101\Persimmon\ElasticsearchModel as Model;
+use Isswp101\Persimmon\Event\EventEmitter;
 
 class ElasticsearchModel extends Model
 {
     public function __construct(array $attributes = [])
     {
-        $dal = new ElasticsearchDAL($this, app(Client::class), new DALMediator());
+        $dal = new ElasticsearchDAL($this, app(Client::class), new EventEmitter());
 
         parent::__construct($dal, $attributes);
     }
@@ -401,19 +401,19 @@ $line = PurchaseOrderLine::search($query)->first();
 $po = $line->po()->get(); // will be retrieved from inner_hits cache
 ```
 
-### Debugging and data access layer events
+### Logging and data access layer events
 
 To debug all elasticsearch queries to search you can use own `DALEmitter` class:
 
 ```php
-use Isswp101\Persimmon\DAL\DALMediator;
-use Log;
+use Isswp101\Persimmon\DAL\DALEvents;
+use Isswp101\Persimmon\Event\EventEmitter;
 
-class DALEmitter extends DALMediator
+class DALEmitter extends EventEmitter
 {
     public function __construct()
     {
-        $this->attach(DALMediator::EVENT_BEFORE_SEARCH, function (array $params) {
+        $this->on(DALEvents::BEFORE_SEARCH, function (array $params) {
             Log::debug('Elasticsearch query', $params);
         });
     }
@@ -423,11 +423,16 @@ class DALEmitter extends DALMediator
 And configure it in your service provider:
 
 ```php
+use Elasticsearch\Client;
+use Isswp101\Persimmon\DAL\ElasticsearchDAL;
+use Isswp101\Persimmon\ElasticsearchModel as Model;
+use Isswp101\Persimmon\Test\Models\Events\DALEmitter;
+
 class ElasticsearchModel extends Model
 {
     public function __construct(array $attributes = [])
     {
-        $dal = new ElasticsearchDAL($this, app(Client::class), new DALEmitter());
+        $dal = new ElasticsearchDAL($this, app(Client::class), app(DALEmitter::class));
 
         parent::__construct($dal, $attributes);
     }
@@ -436,8 +441,8 @@ class ElasticsearchModel extends Model
 ```
 
 There are the following events:
-* `DALMediator::EVENT_BEFORE_SEARCH` is triggered before any search.
-* `DALMediator::EVENT_AFTER_SEARCH` is triggered after any search.
+* `DALEvents::BEFORE_SEARCH` is triggered before any search.
+* `DALEvents::AFTER_SEARCH` is triggered after any search.
 
 **TO BE CONTINUED...**
 

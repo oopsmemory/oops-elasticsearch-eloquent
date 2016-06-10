@@ -6,6 +6,7 @@ use Elasticsearch\Client;
 use Illuminate\Support\Arr;
 use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\ElasticsearchModel;
+use Isswp101\Persimmon\Event\EventEmitter;
 
 class ElasticsearchDAL implements IDAL
 {
@@ -13,7 +14,7 @@ class ElasticsearchDAL implements IDAL
     protected $client;
     protected $emitter;
 
-    public function __construct(ElasticsearchModel $model, Client $client, DALMediator $emitter)
+    public function __construct(ElasticsearchModel $model, Client $client, EventEmitter $emitter)
     {
         $this->model = $model;
         $this->client = $client;
@@ -101,11 +102,11 @@ class ElasticsearchDAL implements IDAL
 
         $collection = new ElasticsearchCollection();
 
-        $this->emitter->trigger(DALMediator::EVENT_BEFORE_SEARCH, $params);
+        $this->emitter->trigger(DALEvents::BEFORE_SEARCH, $params);
 
         $response = $this->client->search($params);
 
-        $this->emitter->trigger(DALMediator::EVENT_AFTER_SEARCH, $response);
+        $this->emitter->trigger(DALEvents::AFTER_SEARCH, $response);
 
         $collection->response($response);
 

@@ -2,15 +2,16 @@
 
 namespace Isswp101\Persimmon\Test\Models\Events;
 
-use Isswp101\Persimmon\DAL\DALMediator;
+use Isswp101\Persimmon\DAL\DALEvents;
+use Isswp101\Persimmon\Event\EventEmitter;
 
-class DALEmitter extends DALMediator
+class DALEmitter extends EventEmitter
 {
     public function __construct()
     {
-        $this->attach(DALMediator::EVENT_BEFORE_SEARCH, function (array $params) {
+        $this->on(DALEvents::BEFORE_SEARCH, function (array $params) {
             // Logging elasticsearch queries
-            return $params;
+            // Log::debug('Query', $params);
         });
     }
 }

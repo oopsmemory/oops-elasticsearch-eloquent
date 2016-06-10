@@ -1,15 +1,12 @@
 <?php
 
-namespace Isswp101\Persimmon\DAL;
+namespace Isswp101\Persimmon\Event;
 
-class DALMediator
+class EventEmitter
 {
-    const EVENT_BEFORE_SEARCH = 'EVENT_BEFORE_SEARCH';
-    const EVENT_AFTER_SEARCH = 'EVENT_AFTER_SEARCH';
-
     protected $events = [];
 
-    public function attach($event, callable $callback)
+    public function on($event, callable $callback)
     {
         if (!isset($this->events[$event])) {
             $this->events[$event] = [];
