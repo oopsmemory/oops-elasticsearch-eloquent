@@ -2,6 +2,7 @@
 
 namespace Isswp101\Persimmon\DAL;
 
+use Isswp101\Persimmon\Event\EventEmitter;
 use Isswp101\Persimmon\Model;
 
 interface IDAL
@@ -10,6 +11,11 @@ interface IDAL
      * @return Model
      */
     public function getModel();
+
+    /**
+     * @return EventEmitter
+     */
+    public function getEventEmitter();
 
     /**
      * @param mixed $id

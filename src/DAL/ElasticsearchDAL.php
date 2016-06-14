@@ -26,6 +26,11 @@ class ElasticsearchDAL implements IDAL
         return $this->model;
     }
 
+    public function getEventEmitter()
+    {
+        return $this->emitter;
+    }
+
     public function get($id, array $options = [])
     {
         $params = $this->model->getPath()->toArray();
