@@ -9,7 +9,7 @@ class EventsTest extends BaseTestCase
     public static function setUpBeforeClass()
     {
         $hash = time();
-        EventableModel::$index = 'travis_ci_test_events' . $hash;
+        EventableModel::$_index = 'travis_ci_test_events' . $hash;
     }
 
     public function testSavingAndSaved()
@@ -43,6 +43,6 @@ class EventsTest extends BaseTestCase
 
     public function testTearDown()
     {
-        $this->deleteIndex(EventableModel::$index);
+        $this->deleteIndex(EventableModel::$_index);
     }
 }

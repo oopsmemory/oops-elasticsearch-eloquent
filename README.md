@@ -59,8 +59,8 @@ You must override static variables `index` and `type` to determine the document 
 ```php
 class Product extends ElasticsearchModel
 {
-    protected static $index = 'test';
-    protected static $type = 'test';
+    protected static $_index = 'test';
+    protected static $_type = 'test';
 
     public $name;
     public $price = 0;
@@ -183,8 +183,8 @@ For example:
 ```php
 class Product extends ElasticsearchModel
 {
-    public static $index = 'test';
-    public static $type = 'test';
+    public static $_index = 'test';
+    public static $_type = 'test';
 
     public $name;
     public $price = 0;
@@ -330,8 +330,8 @@ Let's create two models:
 ```php
 class PurchaseOrder extends ElasticsearchModel
 {
-    protected static $index = 'test_parent_child_rel';
-    protected static $type = 'orders';
+    protected static $_index = 'test_parent_child_rel';
+    protected static $_type = 'orders';
 
     public $name;
 
@@ -343,9 +343,10 @@ class PurchaseOrder extends ElasticsearchModel
 
 class PurchaseOrderLine extends ElasticsearchModel
 {
-    protected static $index = 'test_parent_child_rel';
-    protected static $type = 'lines';
-    protected static $parentType = 'orders';
+    protected static $_index = 'test_parent_child_rel';
+    protected static $_type = 'lines';
+    
+    protected static $_parentType = 'orders';
 
     public $name;
 

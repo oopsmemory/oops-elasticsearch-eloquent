@@ -4,8 +4,8 @@ namespace Isswp101\Persimmon\Test\Models;
 
 class EventableModel extends ElasticsearchModel
 {
-    public static $index = 'test_events';
-    public static $type = 'events';
+    public static $_index = 'test_events';
+    public static $_type = 'events';
 
     public $name;
     public $price = 0;

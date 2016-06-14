@@ -22,7 +22,7 @@ class BasicFeaturesTest extends BaseTestCase
 {
     public static function setUpBeforeClass()
     {
-        Product::$index = 'travis_ci_test_' . time() . rand(1, 1000);
+        Product::$_index = 'travis_ci_test_' . time() . rand(1, 1000);
     }
 
     public function testValidateModel()
@@ -339,6 +339,6 @@ class BasicFeaturesTest extends BaseTestCase
 
     public function testTearDown()
     {
-        $this->deleteIndex(Product::$index);
+        $this->deleteIndex(Product::$_index);
     }
 }

@@ -4,8 +4,8 @@ namespace Isswp101\Persimmon\Test\Models;
 
 class PurchaseOrder extends ElasticsearchModel
 {
-    public static $index = 'test_parent_child_rel';
-    public static $type = 'orders';
+    public static $_index = 'test_parent_child_rel';
+    public static $_type = 'orders';
 
     public $name;
 

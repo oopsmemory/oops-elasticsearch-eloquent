@@ -12,17 +12,17 @@ trait Elasticsearchable
     /**
      * @var string
      */
-    protected static $index;
+    protected static $_index;
 
     /**
      * @var string
      */
-    protected static $type;
+    protected static $_type;
 
     /**
      * @var string
      */
-    protected static $parentType;
+    protected static $_parentType;
 
     /**
      * @var InnerHits
@@ -44,7 +44,7 @@ trait Elasticsearchable
      */
     public static function getIndex()
     {
-        return static::$index;
+        return static::$_index;
     }
 
     /**
@@ -52,7 +52,7 @@ trait Elasticsearchable
      */
     public static function getType()
     {
-        return static::$type;
+        return static::$_type;
     }
 
     /**
@@ -60,7 +60,7 @@ trait Elasticsearchable
      */
     public static function getParentType()
     {
-        return static::$parentType;
+        return static::$_parentType;
     }
 
     /**

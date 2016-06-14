@@ -14,8 +14,8 @@ class RelationshipTest extends BaseTestCase
     public static function setUpBeforeClass()
     {
         $hash = time() . rand(1, 1000);
-        PurchaseOrder::$index = 'travis_ci_test_parent_child_rel_' . $hash;
-        PurchaseOrderLine::$index = 'travis_ci_test_parent_child_rel_' . $hash;
+        PurchaseOrder::$_index = 'travis_ci_test_parent_child_rel_' . $hash;
+        PurchaseOrderLine::$_index = 'travis_ci_test_parent_child_rel_' . $hash;
     }
 
     public function testPrepareIndex()
@@ -134,6 +134,6 @@ class RelationshipTest extends BaseTestCase
 
     public function testTearDown()
     {
-        $this->deleteIndex(PurchaseOrderLine::$index);
+        $this->deleteIndex(PurchaseOrderLine::$_index);
     }
 }
