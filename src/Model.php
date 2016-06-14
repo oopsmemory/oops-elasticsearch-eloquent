@@ -15,16 +15,13 @@ use Isswp101\Persimmon\Traits\Fillable;
 use Isswp101\Persimmon\Traits\Idable;
 use Isswp101\Persimmon\Traits\Mergeable;
 use Isswp101\Persimmon\Traits\Presentable;
-use Isswp101\Persimmon\Traits\Timestampable;
-use Isswp101\Persimmon\Traits\Userable;
 use JsonSerializable;
 use LogicException;
 
 abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializable
 {
     use Presentable, Eventable, Mergeable;
-    use Idable, Userable, Timestampable;
-    use Fillable, Cacheable;
+    use Idable, Fillable, Cacheable;
 
     /**
      * @var IDAL
@@ -81,7 +78,9 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
             return false;
         }
 
-        $this->fillTimestamp();
+        if (method_exists($this, 'fillTimestamp')) {
+            $this->fillTimestamp();
+        }
 
         $this->_dal->put($columns);
 

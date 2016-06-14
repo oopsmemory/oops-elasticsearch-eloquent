@@ -29,9 +29,13 @@ use Elasticsearch\Client;
 use Isswp101\Persimmon\DAL\ElasticsearchDAL;
 use Isswp101\Persimmon\ElasticsearchModel as Model;
 use Isswp101\Persimmon\Event\EventEmitter;
+use Isswp101\Persimmon\Traits\Timestampable;
+use Isswp101\Persimmon\Traits\Userable;
 
 class ElasticsearchModel extends Model
 {
+    use Userable, Timestampable;
+
     public function __construct(array $attributes = [])
     {
         $dal = new ElasticsearchDAL($this, app(Client::class), app(EventEmitter::class));
