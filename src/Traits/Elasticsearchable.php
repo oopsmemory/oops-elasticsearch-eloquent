@@ -42,7 +42,7 @@ trait Elasticsearchable
     /**
      * @return string
      */
-    final public static function getIndex()
+    public static function getIndex()
     {
         return static::$index;
     }
@@ -50,7 +50,7 @@ trait Elasticsearchable
     /**
      * @return string
      */
-    final public static function getType()
+    public static function getType()
     {
         return static::$type;
     }
@@ -58,7 +58,7 @@ trait Elasticsearchable
     /**
      * @return string
      */
-    final public static function getParentType()
+    public static function getParentType()
     {
         return static::$parentType;
     }
