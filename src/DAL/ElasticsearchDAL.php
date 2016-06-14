@@ -40,7 +40,13 @@ class ElasticsearchDAL implements IDAL
 
         $response = $this->client->get($params);
 
-        return $this->model->fillByResponse($response);
+        $this->model->fillByResponse($response);
+
+        if (isset($params['parent'])) {
+            $this->model->setParentId($params['parent']);
+        }
+
+        return $this->model;
     }
 
     public function put(array $columns = ['*'])
