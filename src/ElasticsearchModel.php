@@ -127,7 +127,7 @@ class ElasticsearchModel extends Model
      * Execute the query and get all items.
      *
      * @param QueryBuilder|array $query
-     * @return Collection
+     * @return Collection|static[]
      */
     public static function all($query = [])
     {
