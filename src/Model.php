@@ -68,6 +68,15 @@ abstract class Model implements Arrayable, Jsonable, Stringable, JsonSerializabl
     }
 
     /**
+     * Clone object.
+     */
+    public function __clone()
+    {
+        $this->_dal = clone $this->_dal;
+        $this->_dal->setModel($this);
+    }
+
+    /**
      * Save the model.
      *
      * @param array $columns

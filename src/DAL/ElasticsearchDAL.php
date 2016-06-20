@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Isswp101\Persimmon\Collection\ElasticsearchCollection;
 use Isswp101\Persimmon\ElasticsearchModel;
 use Isswp101\Persimmon\Event\EventEmitter;
+use Isswp101\Persimmon\Model;
 
 class ElasticsearchDAL implements IDAL
 {
@@ -19,6 +20,11 @@ class ElasticsearchDAL implements IDAL
         $this->model = $model;
         $this->client = $client;
         $this->emitter = $emitter;
+    }
+
+    public function setModel(Model $model)
+    {
+        $this->model = $model;
     }
 
     public function getModel()

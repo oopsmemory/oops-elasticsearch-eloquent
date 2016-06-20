@@ -8,6 +8,11 @@ use Isswp101\Persimmon\Model;
 interface IDAL
 {
     /**
+     * @param Model $model
+     */
+    public function setModel(Model $model);
+
+    /**
      * @return Model
      */
     public function getModel();
