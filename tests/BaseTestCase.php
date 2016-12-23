@@ -6,8 +6,8 @@ use Dotenv\Dotenv;
 use Dotenv\Exception\InvalidPathException;
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
-use Monolog\Logger;
 use Orchestra\Testbench\TestCase;
+use Shift31\LaravelElasticsearch\ElasticsearchServiceProvider;
 
 class BaseTestCase extends TestCase
 {
@@ -21,9 +21,9 @@ class BaseTestCase extends TestCase
      */
     public function setUp()
     {
-        parent::setUp();
-
         $this->loadDotenv();
+
+        parent::setUp();
 
         $this->es = app(Client::class);
     }
@@ -49,23 +49,14 @@ class BaseTestCase extends TestCase
      */
     protected function getEnvironmentSetUp($app)
     {
-        $app->singleton(Client::class, function () {
-            $params = [
-                'hosts' => [
-                    env('ELASTICSEARCH_HOSTS', '')
-                ],
-                'logPath' => 'app/storage/logs',
-                'logLevel' => Logger::INFO,
-                'connectionParams' => [
-                    'auth' => [
-                        env('ELASTICSEARCH_AUTH_USER', ''),
-                        env('ELASTICSEARCH_AUTH_PASS', ''),
-                        'Basic'
-                    ]
-                ]
-            ];
-            return new Client($params);
-        });
+        $host = env('ELASTICSEARCH_AUTH_USER', '') . ':' .
+            env('ELASTICSEARCH_AUTH_PASS', '') . '@' .
+            env('ELASTICSEARCH_HOSTS', '');
+
+        $app['config']->set('elasticsearch.hosts', [$host]);
+
+        $elasticsearchServiceProvider = new ElasticsearchServiceProvider($app);
+        $elasticsearchServiceProvider->register();
     }
 
     /**
