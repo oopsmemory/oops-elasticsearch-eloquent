@@ -1,5 +1,5 @@
 {
-    "name": "isswp101/elasticsearch-eloquent",
+    "name": "devemio/elasticsearch-eloquent",
     "type": "library",
     "description": "Elasticsearch functionality like Laravel Eloquent models.",
     "keywords": ["elasticsearch", "eloquent"],

@@ -229,15 +229,15 @@ $ composer test
 The MIT License (MIT).
 
 [ico-version]: https://img.shields.io/packagist/v/isswp101/elasticsearch-eloquent.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/isswp101/elasticsearch-eloquent.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
 [ico-travis]: https://img.shields.io/travis/devemio/elasticsearch-eloquent/master.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/isswp101/elasticsearch-eloquent.svg?style=flat-square
-[ico-code-quality]: https://img.shields.io/scrutinizer/g/isswp101/elasticsearch-eloquent.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/isswp101/elasticsearch-eloquent.svg?style=flat-square
+[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/devemio/elasticsearch-eloquent.svg?style=flat-square
+[ico-code-quality]: https://img.shields.io/scrutinizer/g/devemio/elasticsearch-eloquent.svg?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/isswp101/elasticsearch-eloquent
-[link-travis]: https://travis-ci.org/devemio/elasticsearch-eloquent
-[link-scrutinizer]: https://scrutinizer-ci.com/g/isswp101/elasticsearch-eloquent/code-structure
-[link-code-quality]: https://scrutinizer-ci.com/g/isswp101/elasticsearch-eloquent
 [link-downloads]: https://packagist.org/packages/isswp101/elasticsearch-eloquent
+[link-travis]: https://travis-ci.org/devemio/elasticsearch-eloquent
+[link-scrutinizer]: https://scrutinizer-ci.com/g/devemio/elasticsearch-eloquent/code-structure
+[link-code-quality]: https://scrutinizer-ci.com/g/devemio/elasticsearch-eloquent
 [link-author]: https://github.com/devemio
