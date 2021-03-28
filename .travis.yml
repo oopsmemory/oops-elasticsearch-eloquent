@@ -23,7 +23,7 @@ before_install:
 before_script:
   - echo 'xdebug.mode=coverage' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-dist
-  - php i | grep xdebug
+  - php -i | grep xdebug
   - sleep 30
 
 script:
