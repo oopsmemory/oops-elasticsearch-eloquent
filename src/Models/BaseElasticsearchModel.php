@@ -157,7 +157,7 @@ abstract class BaseElasticsearchModel implements ElasticsearchModelContract, Per
         return $models;
     }
 
-    public static function first(array $query): BaseElasticsearchModel|null
+    public static function first(array $query): static|null
     {
         $query['size'] = 1;
 
@@ -166,7 +166,7 @@ abstract class BaseElasticsearchModel implements ElasticsearchModelContract, Per
         return $items[0] ?? null;
     }
 
-    public static function firstOrFail(array $query): BaseElasticsearchModel
+    public static function firstOrFail(array $query): static
     {
         return static::first($query) ?? throw new ModelNotFoundException();
     }

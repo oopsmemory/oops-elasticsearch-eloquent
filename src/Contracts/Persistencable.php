@@ -3,7 +3,6 @@
 namespace Isswp101\Persimmon\Contracts;
 
 use Isswp101\Persimmon\Exceptions\ModelNotFoundException;
-use Isswp101\Persimmon\Models\BaseElasticsearchModel;
 
 interface Persistencable
 {
@@ -13,30 +12,30 @@ interface Persistencable
 
     public function delete(): void;
 
-    public static function create(array $attributes): BaseElasticsearchModel;
+    public static function create(array $attributes): static;
 
-    public static function find(int|string $id, array $columns = []): BaseElasticsearchModel|null;
+    public static function find(int|string $id, array $columns = []): static|null;
 
     /**
      * @param int|string $id
      * @param array $columns
-     * @return BaseElasticsearchModel
+     * @return static
      * @throws ModelNotFoundException
      */
-    public static function findOrFail(int|string $id, array $columns = []): BaseElasticsearchModel;
+    public static function findOrFail(int|string $id, array $columns = []): static;
 
     public static function destroy(int|string $id): void;
 
     public static function search(array $query): array;
 
-    public static function first(array $query): BaseElasticsearchModel|null;
+    public static function first(array $query): static|null;
 
     /**
      * @param array $query
-     * @return BaseElasticsearchModel
+     * @return static
      * @throws ModelNotFoundException
      */
-    public static function firstOrFail(array $query): BaseElasticsearchModel;
+    public static function firstOrFail(array $query): static;
 
     public static function all(array $query): array;
 }
