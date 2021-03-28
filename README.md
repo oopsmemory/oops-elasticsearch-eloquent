@@ -74,7 +74,6 @@ Use `save()` method to store model data in Elasticsearch. Let's see how this loo
    "_type": "type",
    "_id": "1",
    "_version": 1,
-   "found": true,
    "_source": {
       "id": 1,
       "name": "Product",
