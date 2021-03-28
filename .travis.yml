@@ -21,7 +21,7 @@ before_install:
   - docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.12.0
 
 before_script:
-  - echo 'xdebug.mode=coverage' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  # - echo 'xdebug.mode=coverage' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
   - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-dist
   - sleep 30
 
@@ -30,5 +30,4 @@ script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
 
 after_script:
-  - ls -l ./build
   - docker run --rm -v $(pwd):/opt -w /opt php:7.4-cli bash -c "apt-get update && apt-get install wget git -y && wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover"
