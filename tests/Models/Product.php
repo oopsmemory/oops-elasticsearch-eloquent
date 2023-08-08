@@ -10,7 +10,7 @@ use Isswp101\Persimmon\Models\BaseElasticsearchModel;
  */
 final class Product extends BaseElasticsearchModel
 {
-    protected string $index = 'index';
+    protected string $index = 'test_index_prod';
 
     protected int $perRequest = 5;
 }

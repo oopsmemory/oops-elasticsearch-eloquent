@@ -2,7 +2,7 @@
 
 namespace Isswp101\Persimmon\Models;
 
-use Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\ClientBuilder;
 use Isswp101\Persimmon\Concerns\Attributable;
 use Isswp101\Persimmon\Concerns\Elasticsearchable;
 use Isswp101\Persimmon\Concerns\Eventable;
@@ -40,7 +40,12 @@ abstract class BaseElasticsearchModel implements ElasticsearchModelContract, Per
 
     public function createPersistence(): PersistenceContract
     {
-        $client = ClientBuilder::create()->build();
+        $client = ClientBuilder::create()
+            ->setHosts(['https://localhost:9200'])
+            // ->setSSLVerification()
+            // ->setHttpClient(new HttpClient(['verify' => false ]))
+            ->setBasicAuthentication('elastic', 'VVL8HFS6Uo8s3dEo0YX+')
+            ->build();
 
         return new Persistence($client);
     }

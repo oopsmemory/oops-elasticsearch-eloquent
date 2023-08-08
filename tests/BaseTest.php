@@ -2,12 +2,14 @@
 
 namespace Isswp101\Persimmon\Tests;
 
-use Elasticsearch\Client;
-use Elasticsearch\ClientBuilder;
-use Elasticsearch\Common\Exceptions\Missing404Exception;
+use Elastic\Elasticsearch\ClientBuilder;
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Exception\MissingParameterException;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Isswp101\Persimmon\Exceptions\ModelNotFoundException;
 use Isswp101\Persimmon\Tests\Models\Product;
 use PHPUnit\Framework\TestCase;
+use GuzzleHttp\Client as HttpClient;
 
 function dd(mixed $value): void
 {
@@ -27,7 +29,17 @@ class BaseTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->client = ClientBuilder::create()->build();
+
+        $this->client = ClientBuilder::create()
+            // ->setSSLVerification(true)
+            // ->setHosts(["localhost:9200"])
+
+            ->setHosts(['https://localhost:9200'])
+            ->setSSLVerification()
+            // ->setHttpClient(new HttpClient(['verify' => false ]))
+            ->setBasicAuthentication('elastic', 'VVL8HFS6Uo8s3dEo0YX+')
+            // ->setCABundle('./elasticdev8/http_ca.crt')
+            ->build();
     }
 
     private function sleep(int $seconds = 1): void
@@ -68,7 +80,7 @@ class BaseTest extends TestCase
 
     public function testDeleteModel(): void
     {
-        $this->expectException(Missing404Exception::class);
+        $this->expectException(ClientResponseException::class);
 
         $product = Product::create(array_merge(['id' => '1'], $this->attributes));
 

@@ -2,7 +2,7 @@
 
 namespace Isswp101\Persimmon\Persistence;
 
-use Elasticsearch\Client;
+use Elastic\Elasticsearch\Client;
 use Exception;
 use Isswp101\Persimmon\Contracts\PersistenceContract;
 use Isswp101\Persimmon\DTO\Id;

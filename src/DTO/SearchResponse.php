@@ -2,13 +2,17 @@
 
 namespace Isswp101\Persimmon\DTO;
 
+use Elastic\Elasticsearch\Response\Elasticsearch;
+
 final class SearchResponse
 {
     private int $total;
     private array $items = [];
 
-    public function __construct(array $response)
+    public function __construct(Elasticsearch $response)
     {
+        $response = $response->asArray();
+
         $this->total = $response['hits']['total']['value'];
 
         foreach ($response['hits']['hits'] as $hit) {
