@@ -12,7 +12,7 @@ This package allows you to interact with Elasticsearch as you interact with Eloq
 ## Requirements
 
 - PHP >= 8.0
-- Elasticsearch >= 7.0
+- Elasticsearch >= 8.0
 
 ## Install
 
