@@ -9,6 +9,7 @@ use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Isswp101\Persimmon\Exceptions\ModelNotFoundException;
 use Isswp101\Persimmon\Tests\Models\Product;
 use PHPUnit\Framework\TestCase;
+use GuzzleHttp\Client as HttpClient;
 
 function dd(mixed $value): void
 {
@@ -32,7 +33,10 @@ class BaseTest extends TestCase
         $this->client = ClientBuilder::create()
             // ->setSSLVerification(true)
             // ->setHosts(["localhost:9200"])
+
             ->setHosts(['https://localhost:9200'])
+            ->setSSLVerification()
+            // ->setHttpClient(new HttpClient(['verify' => false ]))
             ->setBasicAuthentication('elastic', 'VVL8HFS6Uo8s3dEo0YX+')
             // ->setCABundle('./elasticdev8/http_ca.crt')
             ->build();
@@ -77,8 +81,8 @@ class BaseTest extends TestCase
     public function testDeleteModel(): void
     {
         $this->expectException(ClientResponseException::class);
-);
 
+        $product = Product::create(array_merge(['id' => '1'], $this->attributes));
 
         $this->sleep();
 
